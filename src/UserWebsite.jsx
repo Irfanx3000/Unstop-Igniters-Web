@@ -9,7 +9,8 @@ import { motion } from "framer-motion";
 const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
   const { user, userProfile, isAdmin, signOut } = useAuth();
 
-  const displayName = userProfile?.name || user?.email?.split("@")[0] || "User";
+  const displayName =
+    userProfile?.name || user?.email?.split("@")[0] || "User";
 
   const handleSignOut = async () => {
     try {
@@ -107,7 +108,7 @@ const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
             p-4 rounded-b-2xl shadow-[0_0_25px_rgba(255,115,0,0.25)]
           "
         >
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0"> 
             {/* LOGO + TYPEWRITER */}
             <div className="flex items-center gap-4">
               <img
@@ -121,19 +122,24 @@ const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="text-sm md:text-base font-medium whitespace-nowrap flex items-center"
+                className="text-sm md:text-base font-medium flex items-center gap-1"
               >
+                {/* FIRST PART */}
                 <span className="text-white">{firstTyped}</span>
+
+                {/* ALWAYS A SPACE BETWEEN THEM */}
                 <span className="text-hot-pink">{secondTyped}</span>
 
+                {/* CURSOR */}
                 <span
-                  className={`ml-1 ${
+                  className={`${
                     cursorVisible ? "opacity-100" : "opacity-0"
                   } text-hot-pink font-bold`}
                 >
                   |
                 </span>
               </motion.div>
+
             </div>
 
             {/* RIGHT SIDE BUTTONS */}
@@ -213,12 +219,10 @@ const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
 
         <div className="relative container mx-auto px-6 md:px-10 grid md:grid-cols-2 gap-10 z-10">
           <div>
-            <h3 className="text-2xl font-black mb-3">
-              Unstop Igniters Club — AIKTC
-            </h3>
+            <h3 className="text-2xl font-black mb-3">Unstop Igniters Club — AIKTC</h3>
 
             <p className="text-white/70 leading-relaxed max-w-md">
-              Igniters Club is a student-driven initiative at AIKTC focused on
+              Igniters Club is a student-driven initiative at AIKTC focused on 
               innovation, creativity, and practical learning.
             </p>
           </div>
@@ -228,41 +232,29 @@ const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
 
             <ul className="space-y-2 text-white/80 md:space-y-3">
               <li>
-                <a
-                  href="https://github.com/Irfanx3000"
-                  target="_blank"
-                  className="hover:text-hot-pink transition font-semibold"
-                >
+                <a href="https://github.com/Irfanx3000" target="_blank"
+                   className="hover:text-hot-pink transition font-semibold">
                   ⭐ Irfan Shaikh — Tech Lead
                 </a>
               </li>
 
               <li>
-                <a
-                  href="https://github.com/LabbaiIrfan"
-                  target="_blank"
-                  className="hover:text-hot-pink transition font-semibold"
-                >
+                <a href="https://github.com/LabbaiIrfan" target="_blank"
+                   className="hover:text-hot-pink transition font-semibold">
                   ⭐ Irfan Labbai — President
                 </a>
               </li>
 
               <li>
-                <a
-                  href="#"
-                  target="_blank"
-                  className="hover:text-hot-pink transition font-semibold"
-                >
+                <a href="#" target="_blank"
+                   className="hover:text-hot-pink transition font-semibold">
                   ⭐ NAME — Vice President
                 </a>
               </li>
 
               <li>
-                <a
-                  href="#"
-                  target="_blank"
-                  className="hover:text-hot-pink transition font-semibold"
-                >
+                <a href="#" target="_blank"
+                   className="hover:text-hot-pink transition font-semibold">
                   ⭐ NAME — Design Lead
                 </a>
               </li>
