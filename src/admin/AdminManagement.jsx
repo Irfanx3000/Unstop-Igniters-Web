@@ -54,18 +54,32 @@ const AdminManagement = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-black text-gray-800">Admin Management</h2>
-      
-      <GlassCard className="p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Add New Admin</h3>
+
+      <h2 className="text-3xl font-black text-white drop-shadow-lg">
+        Admin Management
+      </h2>
+
+      {/* Add Admin */}
+      <GlassCard className="p-6 bg-white/10 backdrop-blur-xl border border-white/10 shadow-xl">
+        <h3 className="text-xl font-bold text-white mb-4">
+          Add New Admin
+        </h3>
+
         <form onSubmit={addAdmin} className="flex gap-4">
+
+          {/* EMAIL INPUT */}
           <input
             type="email"
             value={newAdminEmail}
             onChange={(e) => setNewAdminEmail(e.target.value)}
             placeholder="Enter admin email"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hot-pink focus:border-transparent"
+            className="flex-1 px-4 py-3 rounded-lg 
+                       bg-black/40 text-white border border-white/20 
+                       placeholder-white/40
+                       focus:ring-2 focus:ring-hot-pink focus:border-transparent"
           />
+
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading}
@@ -76,17 +90,26 @@ const AdminManagement = () => {
         </form>
       </GlassCard>
 
-      <GlassCard className="p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Current Admins</h3>
+      {/* Current Admin List */}
+      <GlassCard className="p-6 bg-white/10 backdrop-blur-xl border border-white/10 shadow-xl">
+        <h3 className="text-xl font-bold text-white mb-4">
+          Current Admins
+        </h3>
+
         <div className="space-y-3">
           {admins.map(admin => (
-            <div key={admin.id} className="flex justify-between items-center p-3 bg-white/50 rounded-lg">
+            <div
+              key={admin.id}
+              className="flex justify-between items-center 
+                         p-4 rounded-lg bg-black/40 border border-white/10"
+            >
               <div>
-                <div className="font-semibold text-gray-800">{admin.email}</div>
-                <div className="text-sm text-gray-500">
+                <div className="font-semibold text-white">{admin.email}</div>
+                <div className="text-sm text-white/60">
                   Added: {new Date(admin.created_at).toLocaleDateString()}
                 </div>
               </div>
+
               <button
                 onClick={() => removeAdmin(admin.id)}
                 className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
@@ -95,6 +118,12 @@ const AdminManagement = () => {
               </button>
             </div>
           ))}
+
+          {admins.length === 0 && (
+            <div className="text-center text-white/50 py-6">
+              No admins added yet.
+            </div>
+          )}
         </div>
       </GlassCard>
     </div>

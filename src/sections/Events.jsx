@@ -1,161 +1,197 @@
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { useEvents } from '../hooks/useEvents'
-import GlassCard from '../components/GlassCard'
-import RegistrationModal from '../components/RegistrationModal'
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEvents } from "../hooks/useEvents";
+import GlassCard from "../components/GlassCard";
+import RegistrationModal from "../components/RegistrationModal";
 
 const Events = () => {
-  const [activeTab, setActiveTab] = useState('unstop')
-  const [selectedEvent, setSelectedEvent] = useState(null)
-  const [modalOpen, setModalOpen] = useState(false)
-  
-  const { events: unstopEvents, loading: unstopLoading } = useEvents('unstop')
-  const { events: ignitersEvents, loading: ignitersLoading } = useEvents('igniters')
+  const [activeTab, setActiveTab] = useState("unstop");
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [slide, setSlide] = useState(0);
+
+  const { events: unstopEvents, loading: unstopLoading } = useEvents("unstop");
+  const { events: ignitersEvents, loading: ignitersLoading } =
+    useEvents("igniters");
+
+  const events = activeTab === "unstop" ? unstopEvents : ignitersEvents;
+
+  // Number of cards per slide (responsive)
+  const getCardsPerSlide = () => {
+    if (window.innerWidth < 640) return 1; // mobile
+    if (window.innerWidth < 1024) return 2; // tablet
+    return 3; // desktop
+  };
+
+  const cardsPerSlide = getCardsPerSlide();
+  const totalSlides = Math.ceil(events.length / cardsPerSlide);
+
+  const goNext = () => {
+    setSlide((prev) => (prev + 1) % totalSlides);
+  };
+
+  const goPrev = () => {
+    setSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
 
   const handleEventClick = (event) => {
-    if (activeTab === 'igniters') {
-      setSelectedEvent(event)
-      setModalOpen(true)
+    if (activeTab === "igniters") {
+      setSelectedEvent(event);
+      setModalOpen(true);
     } else if (event.external_link) {
-      window.open(event.external_link, '_blank')
+      window.open(event.external_link, "_blank");
     }
-  }
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1
-    }
-  }
+  };
 
   return (
-    <section id="events" className="min-h-screen py-20 bg-gradient-to-b from-white to-pink-50/30">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-5xl md:text-6xl font-black mb-6">
-            <span className="text-hot-pink">Events</span>
-            <span className="text-black"> & Activities</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover exciting competitions, workshops, and networking opportunities 
-            to fuel your passion and accelerate your growth.
-          </p>
-        </motion.div>
+    <section className="min-h-screen py-20 relative bg-[#050505] overflow-hidden">
+      {/* Nebula Background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-pink-600/20 blur-[180px] rounded-full"></div>
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-orange-500/20 blur-[180px] rounded-full"></div>
+      </div>
 
-        {/* Tab Navigation */}
-        <div className="flex justify-center mb-12">
-          <GlassCard className="p-2 inline-flex">
+      <div className="container mx-auto px-4 relative z-20">
+        
+        {/* Title */}
+        <h2 className="text-5xl md:text-6xl font-black text-center mb-8">
+          <span className="text-hot-pink">Events</span>{" "}
+          <span className="text-white">& Activities</span>
+        </h2>
+
+        {/* Tabs */}
+        <div className="flex justify-center mb-10">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-2 inline-flex shadow-lg">
             <button
-              onClick={() => setActiveTab('unstop')}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                activeTab === 'unstop'
-                  ? 'gradient-btn text-white'
-                  : 'text-gray-600 hover:text-hot-pink'
+              onClick={() => {
+                setActiveTab("unstop");
+                setSlide(0);
+              }}
+              className={`px-8 py-3 rounded-xl font-semibold transition-all ${
+                activeTab === "unstop"
+                  ? "gradient-btn text-white"
+                  : "text-gray-300"
               }`}
             >
               Unstop Events
             </button>
+
             <button
-              onClick={() => setActiveTab('igniters')}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                activeTab === 'igniters'
-                  ? 'gradient-btn text-white'
-                  : 'text-gray-600 hover:text-hot-pink'
+              onClick={() => {
+                setActiveTab("igniters");
+                setSlide(0);
+              }}
+              className={`px-8 py-3 rounded-xl font-semibold transition-all ${
+                activeTab === "igniters"
+                  ? "gradient-btn text-white"
+                  : "text-gray-300"
               }`}
             >
               Igniters Events
             </button>
-          </GlassCard>
+          </div>
         </div>
 
-        {/* Events Grid */}
-        <motion.div
-          key={activeTab}
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {(activeTab === 'unstop' ? unstopEvents : ignitersEvents).map((event, index) => (
+        {/* Carousel Wrapper */}
+        <div className="relative w-full overflow-hidden">
+          <AnimatePresence initial={false} mode="wait">
             <motion.div
-              key={event.id}
-              variants={itemVariants}
-              custom={index}
+              key={slide}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
             >
-              <GlassCard
-                hover={true}
-                className="p-6 h-full cursor-pointer"
-                onClick={() => handleEventClick(event)}
-              >
-                <div className="mb-4">
-                  <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                    event.event_type === 'unstop'
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'bg-hot-pink/10 text-hot-pink'
-                  }`}>
-                    {event.event_type}
-                  </span>
-                </div>
-                
-                <h3 className="text-xl font-bold text-gray-800 mb-3">{event.title}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">{event.description}</p>
-                
-                {event.event_date && (
-                  <div className="flex items-center text-gray-500 mb-4">
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {new Date(event.event_date).toLocaleDateString()}
-                  </div>
-                )}
-                
-                <button className={`w-full py-2 rounded-lg font-semibold transition-all ${
-                  activeTab === 'unstop'
-                    ? 'bg-blue-500 text-white hover:bg-blue-600'
-                    : 'gradient-btn'
-                }`}>
-                  {activeTab === 'unstop' ? 'View on Unstop' : 'Register Now'}
-                </button>
-              </GlassCard>
+              {events
+                .slice(slide * cardsPerSlide, slide * cardsPerSlide + cardsPerSlide)
+                .map((event) => (
+                  <GlassCard
+                    key={event.id}
+                    hover
+                    onClick={() => handleEventClick(event)}
+                    className="p-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-[0_0_35px_rgba(255,44,165,0.25)] cursor-pointer"
+                  >
+                    {/* Badge */}
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-4 ${
+                        event.event_type === "unstop"
+                          ? "bg-blue-500/20 text-blue-300"
+                          : "bg-hot-pink/20 text-hot-pink"
+                      }`}
+                    >
+                      {event.event_type}
+                    </span>
+
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-white mb-3">
+                      {event.title}
+                    </h3>
+
+                    <p className="text-gray-300 mb-4">{event.description}</p>
+
+                    {/* Date */}
+                    {event.event_date && (
+                      <div className="text-gray-400 mb-4">
+                        {new Date(event.event_date).toLocaleDateString()}
+                      </div>
+                    )}
+
+                    <button className="w-full gradient-btn py-3 rounded-xl font-semibold">
+                      {activeTab === "unstop"
+                        ? "View on Unstop"
+                        : "Register Now"}
+                    </button>
+                  </GlassCard>
+                ))}
             </motion.div>
+          </AnimatePresence>
+
+          {/* ARROW BUTTONS */}
+          <button
+            onClick={goPrev}
+            className="absolute top-1/2 -left-3 transform -translate-y-1/2 bg-white/10 text-white p-3 rounded-full backdrop-blur-xl border border-white/20 hover:bg-white/20"
+          >
+            ‹
+          </button>
+
+          <button
+            onClick={goNext}
+            className="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white/10 text-white p-3 rounded-full backdrop-blur-xl border border-white/20 hover:bg-white/20"
+          >
+            ›
+          </button>
+        </div>
+
+        {/* DOTS */}
+        <div className="flex justify-center mt-6 gap-3">
+          {Array.from({ length: totalSlides }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setSlide(index)}
+              className={`w-4 h-4 rounded-full transition-all ${
+                index === slide
+                  ? "bg-hot-pink scale-125"
+                  : "bg-white/30 hover:bg-white/50"
+              }`}
+            />
           ))}
-        </motion.div>
+        </div>
 
-        {(activeTab === 'unstop' ? unstopLoading : ignitersLoading) && (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-hot-pink"></div>
-          </div>
-        )}
-
+        {/* Modals */}
         {selectedEvent && (
           <RegistrationModal
             event={selectedEvent}
             isOpen={modalOpen}
             onClose={() => {
-              setModalOpen(false)
-              setSelectedEvent(null)
+              setModalOpen(false);
+              setSelectedEvent(null);
             }}
           />
         )}
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Events
+export default Events;

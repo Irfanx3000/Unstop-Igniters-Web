@@ -1,122 +1,134 @@
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useAuth } from '../context/AuthContext'
-import Analytics from './Analytics'
-import EventManagement from './EventManagement'
-import TeamManagement from './TeamManagement'
-import AdminManagement from './AdminManagement'
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+
+import {
+  ChartBarIcon,
+  UsersIcon,
+  ShieldCheckIcon,
+  CalendarDaysIcon,
+} from "@heroicons/react/24/outline";
+
+import Analytics from "./Analytics";
+import EventManagement from "./EventManagement";
+import TeamManagement from "./TeamManagement";
+import AdminManagement from "./AdminManagement";
 
 const AdminDashboard = ({ onViewUserWebsite }) => {
-  const [activeTab, setActiveTab] = useState('analytics')
-  const { user, userProfile, signOut } = useAuth()
+  const [activeTab, setActiveTab] = useState("analytics");
+  const { user, userProfile, signOut } = useAuth();
 
   const tabs = [
-    { id: 'analytics', name: 'Analytics', icon: '📊' },
-    { id: 'events', name: 'Events', icon: '🎯' },
-    { id: 'team', name: 'Team', icon: '👥' },
-    { id: 'admins', name: 'Admins', icon: '🔐' },
-  ]
+    { id: "analytics", name: "Analytics", icon: ChartBarIcon },
+    { id: "events", name: "Events", icon: CalendarDaysIcon },
+    { id: "team", name: "Team", icon: UsersIcon },
+    { id: "admins", name: "Admins", icon: ShieldCheckIcon },
+  ];
 
   const handleSignOut = async () => {
     try {
-      await signOut()
-    } catch (error) {
-      console.error('Sign out failed:', error)
-      alert('Sign out failed. Please try again.')
+      await signOut();
+    } catch {
+      alert("Sign-out failed.");
     }
-  }
+  };
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'analytics':
-        return <Analytics />
-      case 'events':
-        return <EventManagement />
-      case 'team':
-        return <TeamManagement />
-      case 'admins':
-        return <AdminManagement />
+      case "analytics":
+        return <Analytics />;
+      case "events":
+        return <EventManagement />;
+      case "team":
+        return <TeamManagement />;
+      case "admins":
+        return <AdminManagement />;
       default:
-        return <Analytics />
+        return <Analytics />;
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="flex items-center justify-between p-6">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-black font-bold text-lg">unstop</span>
-              <div className="h-4 w-px bg-gray-300"></div>
-              <span className="text-hot-pink font-black text-lg">IGNITERS</span>
-              <span className="text-black font-bold text-lg">CLUB</span>
-            </div>
-            <h1 className="text-2xl font-black">
-              Admin Dashboard
-            </h1>
-            <p className="text-gray-600">
-              Welcome back, {userProfile?.name || user?.email?.split('@')[0] || 'Admin'}
-            </p>
-          </div>
-          
-          <div className="flex gap-4">
-            <button
-              onClick={onViewUserWebsite}
-              className="gradient-btn text-sm"
-            >
-              View User Website
-            </button>
-            <button
-              onClick={handleSignOut}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen relative flex">
 
-      <div className="flex">
-        {/* Sidebar */}
+      {/* ⭐ Background (same as login) */}
+      <div className="absolute inset-0 bg-black"></div>
+      <div className="absolute inset-0 bg-[url('/stars.png')] opacity-40 mix-blend-screen"></div>
+
+      {/* 🌌 Nebula glows */}
+      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-pink-500/20 blur-[180px]"></div>
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-orange-500/20 blur-[180px]"></div>
+
+      {/* Slight dark overlay */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+
+      {/* MAIN LAYOUT (unchanged) */}
+      <div className="relative z-10 flex w-full">
+
+        {/* SIDEBAR — EXACT SAME STRUCTURE */}
         <motion.nav
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          className="w-64 bg-white min-h-screen p-4 border-r border-gray-200"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="w-64 min-h-screen p-6 border-r border-white/10 
+                     bg-white/10 backdrop-blur-xl shadow-xl"
         >
+          <h1 className="text-2xl font-extrabold text-white mb-1">
+            Admin Dashboard
+          </h1>
+
+          <p className="text-gray-300 text-sm mb-8">
+            Welcome, {userProfile?.name || user?.email}
+          </p>
+
           <div className="space-y-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 p-4 rounded-xl transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-gradient-to-r from-[#FF4DA6] to-[#FF8A29] text-white shadow-lg'
-                    : 'text-gray-600 hover:text-hot-pink hover:bg-gray-50'
-                }`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all
+                  ${
+                    activeTab === tab.id
+                      ? "bg-gradient-to-r from-hot-pink to-orange-400 text-white shadow-lg"
+                      : "text-gray-300 hover:bg-white/10"
+                  }`}
               >
-                <span className="text-xl">{tab.icon}</span>
+                <tab.icon className="w-6 h-6" />
                 <span className="font-semibold">{tab.name}</span>
               </button>
             ))}
           </div>
+
+          <div className="mt-10 space-y-3">
+            <button
+              onClick={handleSignOut}
+              className="w-full py-2 bg-red-500/80 text-white rounded-xl hover:bg-red-600"
+            >
+              Sign Out
+            </button>
+            <button
+              onClick={onViewUserWebsite}
+              className="w-full py-2 bg-white/20 text-white rounded-xl hover:bg-white/30"
+            >
+              View User Site
+            </button>
+          </div>
         </motion.nav>
 
-        {/* Main Content */}
+        {/* MAIN CONTENT — SAME STRUCTURE */}
         <motion.main
           key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex-1 p-6"
+          className="flex-1 p-8 text-white"
         >
           <AnimatePresence mode="wait">
             {renderContent()}
           </AnimatePresence>
         </motion.main>
+
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminDashboard
+export default AdminDashboard;

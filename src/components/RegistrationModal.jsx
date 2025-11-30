@@ -1,92 +1,91 @@
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useAuth } from '../context/AuthContext'
-import { supabase } from '../supabase/client'
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import { supabase } from "../supabase/client";
+import Starfield from "./StarField"; // ⭐ Stars background
 
 const RegistrationModal = ({ event, isOpen, onClose }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    course: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const { user } = useAuth()
+    name: "",
+    email: "",
+    course: "",
+    year: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user && isOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        email: user.email || "",
+      }));
+    }
+  }, [user, isOpen]);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    // Check if user is logged in
+    e.preventDefault();
+
     if (!user) {
-      alert('Please sign in to register for events.')
-      onClose()
-      return
+      alert("Please sign in to register for events.");
+      onClose();
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      // First, check if user is already registered for this event
       const { data: existingRegistration, error: checkError } = await supabase
-        .from('igniters_registrations')
-        .select('*')
-        .eq('event_id', event.id)
-        .eq('email', formData.email)
-        .single()
+        .from("igniters_registrations")
+        .select("*")
+        .eq("event_id", event.id)
+        .eq("email", formData.email)
+        .single();
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError
-      }
+      if (checkError && checkError.code !== "PGRST116") throw checkError;
 
       if (existingRegistration) {
-        alert('You are already registered for this event!')
-        setLoading(false)
-        return
+        alert("You already registered for this event!");
+        setLoading(false);
+        return;
       }
 
-      // Insert new registration
-      const { error } = await supabase
-        .from('igniters_registrations')
-        .insert([{
+      const { error } = await supabase.from("igniters_registrations").insert([
+        {
           event_id: event.id,
           name: formData.name,
           email: formData.email,
-          course: formData.course
-        }])
+          course: formData.course,
+          year: formData.year,
+        },
+      ]);
 
-      if (error) throw error
-      
-      setSuccess(true)
+      if (error) throw error;
+
+      setSuccess(true);
+
       setTimeout(() => {
-        onClose()
-        setSuccess(false)
-        setFormData({ name: '', email: '', course: '' })
-      }, 2000)
-    } catch (error) {
-      console.error('Registration error:', error)
-      alert('Registration failed. Please try again.')
+        onClose();
+        setSuccess(false);
+        setFormData({ name: "", email: "", course: "", year: "" });
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      alert("Registration failed. Try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
-
-  // Pre-fill form with user data if available
-  React.useEffect(() => {
-    if (user && isOpen) {
-      setFormData(prev => ({
-        ...prev,
-        email: user.email || '',
-        name: prev.name || '' // Don't auto-fill name for privacy
-      }))
-    }
-  }, [user, isOpen])
+  };
 
   return (
     <AnimatePresence>
@@ -95,105 +94,131 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4"
           onClick={onClose}
         >
+          {/* ⭐ Stars + Nebula */}
+          <div className="absolute inset-0 -z-10 pointer-events-none">
+            <Starfield />
+            <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-pink-500/20 blur-[150px] rounded-full"></div>
+            <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-orange-500/20 blur-[150px] rounded-full"></div>
+          </div>
+
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="glass-card p-8 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
+            className="
+              glass-card 
+              max-w-lg w-full 
+              max-h-[80vh] overflow-y-auto
+              p-6 
+              rounded-3xl 
+              bg-white/10 backdrop-blur-2xl 
+              border border-white/20 
+              shadow-[0_0_60px_rgba(255,120,200,0.2)]
+            "
           >
             {success ? (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="text-center"
-              >
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center py-6">
                 <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-hot-pink mb-2">Registration Successful!</h3>
-                <p className="text-gray-600 mb-4">Thank you for registering for</p>
-                <p className="font-semibold text-gray-800">{event.title}</p>
-                <button
-                  onClick={onClose}
-                  className="w-full gradient-btn mt-6"
-                >
-                  Close
-                </button>
+                <h3 className="text-xl font-black text-hot-pink mb-2">Registration Successful!</h3>
+                <p className="text-gray-200">You are registered for:</p>
+                <p className="font-semibold text-white mt-1">{event.title}</p>
               </motion.div>
             ) : (
               <>
-                <h3 className="text-2xl font-bold text-hot-pink mb-2">Register for {event.title}</h3>
-                <p className="text-gray-600 mb-6">Join this exciting event hosted by Igniters Club</p>
-                
+                <h3 className="text-3xl font-black text-hot-pink mb-2">
+                  Register for {event.title}
+                </h3>
+                <p className="text-gray-200 mb-6">
+                  Join this exciting event hosted by Igniters Club
+                </p>
+
                 {!user && (
-                  <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 text-yellow-700 rounded-lg text-sm">
+                  <div className="mb-4 p-3 bg-yellow-500/20 border border-yellow-400 text-yellow-200 rounded-lg text-sm">
                     Please sign in to register for this event.
                   </div>
                 )}
-                
-                <form onSubmit={handleSubmit} className="space-y-4">
+
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  {/* NAME */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                    <label className="block text-sm font-medium text-white mb-1">Full Name *</label>
                     <input
-                      type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       required
                       disabled={!user}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hot-pink focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-3 bg-white/10 text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-hot-pink placeholder-gray-300 disabled:opacity-50"
                       placeholder="Enter your full name"
                     />
                   </div>
-                  
+
+                  {/* EMAIL */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                    <label className="block text-sm font-medium text-white mb-1">Email *</label>
                     <input
-                      type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       required
                       disabled={!user}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hot-pink focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-3 bg-white/10 text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-hot-pink placeholder-gray-300 disabled:opacity-50"
                       placeholder="Enter your email"
                     />
                   </div>
-                  
+
+                  {/* COURSE */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Course/Department *</label>
+                    <label className="block text-sm font-medium text-white mb-1">Course/Department *</label>
                     <input
-                      type="text"
                       name="course"
                       value={formData.course}
                       onChange={handleChange}
                       required
                       disabled={!user}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hot-pink focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-3 bg-white/10 text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-hot-pink placeholder-gray-300 disabled:opacity-50"
                       placeholder="e.g., Computer Engineering, B.Tech"
                     />
                   </div>
-                  
-                  <div className="flex gap-4 pt-4">
+
+                  {/* YEAR */}
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-1">Year *</label>
+                    <input
+                      name="year"
+                      value={formData.year}
+                      onChange={handleChange}
+                      required
+                      disabled={!user}
+                      className="w-full px-4 py-3 bg-white/10 text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-hot-pink placeholder-gray-300 disabled:opacity-50"
+                      placeholder="e.g., 1st Year / TY / Final Year"
+                    />
+                  </div>
+
+                  {/* BUTTONS */}
+                  <div className="flex gap-4 pt-3">
                     <button
                       type="button"
                       onClick={onClose}
-                      className="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
+                      className="flex-1 py-3 bg-white/10 text-white border border-white/20 rounded-xl"
                     >
                       Cancel
                     </button>
+
                     <button
                       type="submit"
-                      disabled={loading || !user}
-                      className="flex-1 gradient-btn disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={!user || loading}
+                      className="flex-1 gradient-btn rounded-xl disabled:opacity-50"
                     >
-                      {!user ? 'Sign In Required' : loading ? 'Registering...' : 'Register'}
+                      {!user ? "Sign In Required" : loading ? "Registering..." : "Register"}
                     </button>
                   </div>
                 </form>
@@ -203,7 +228,7 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
         </motion.div>
       )}
     </AnimatePresence>
-  )
-}
+  );
+};
 
-export default RegistrationModal
+export default RegistrationModal;

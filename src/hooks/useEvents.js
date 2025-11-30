@@ -11,8 +11,11 @@ export const useEvents = (type = null) => {
 
   const fetchEvents = async () => {
     try {
-      let query = supabase.from('events').select('*').order('event_date', { ascending: true })
-      
+      let query = supabase
+        .from('events')
+        .select('*')
+        .order('event_date', { ascending: true })
+
       if (type) {
         query = query.eq('event_type', type)
       }
@@ -28,41 +31,74 @@ export const useEvents = (type = null) => {
     }
   }
 
-  const addEvent = async (event) => {
-    const { data, error } = await supabase
-      .from('events')
-      .insert([event])
-      .select()
+  const addEvent = async (eventData) => {
+    try {
+      // REQUIRED: fetch current user
+      const {
+        data: { user },
+        error: userError
+      } = await supabase.auth.getUser()
 
-    if (!error) {
+      if (userError || !user) {
+        return { data: null, error: new Error('User not authenticated') }
+      }
+
+      const payload = {
+        ...eventData,
+        created_by: user.id, // REQUIRED for your DB schema
+      }
+
+      const { data, error } = await supabase
+        .from('events')
+        .insert([payload])
+        .select()
+
+      if (error) throw error
+
       setEvents(prev => [...prev, data[0]])
+      return { data: data[0], error: null }
+    } catch (error) {
+      console.error('Error adding event:', error)
+      return { data: null, error }
     }
-    return { data, error }
   }
 
   const updateEvent = async (id, updates) => {
-    const { data, error } = await supabase
-      .from('events')
-      .update(updates)
-      .eq('id', id)
-      .select()
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .update(updates)
+        .eq('id', id)
+        .select()
 
-    if (!error) {
-      setEvents(prev => prev.map(event => event.id === id ? data[0] : event))
+      if (error) throw error
+
+      setEvents(prev =>
+        prev.map(event => (event.id === id ? data[0] : event))
+      )
+
+      return { data: data[0], error: null }
+    } catch (error) {
+      console.error('Error updating event:', error)
+      return { data: null, error }
     }
-    return { data, error }
   }
 
   const deleteEvent = async (id) => {
-    const { error } = await supabase
-      .from('events')
-      .delete()
-      .eq('id', id)
+    try {
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id)
 
-    if (!error) {
+      if (error) throw error
+
       setEvents(prev => prev.filter(event => event.id !== id))
+      return { error: null }
+    } catch (error) {
+      console.error('Error deleting event:', error)
+      return { error }
     }
-    return { error }
   }
 
   return {
@@ -71,6 +107,6 @@ export const useEvents = (type = null) => {
     addEvent,
     updateEvent,
     deleteEvent,
-    refetch: fetchEvents
+    refetch: fetchEvents,
   }
 }

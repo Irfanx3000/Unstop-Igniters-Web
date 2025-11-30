@@ -2,21 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* -----------------------------------------
+   BASE SETTINGS
+------------------------------------------ */
 @layer base {
   html {
     scroll-behavior: smooth;
   }
-  
- body {
-    background-color: white; 
-    color: black;
+
+  body {
+    background-color: black;
+    color: white;
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+      'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+      'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  } 
+  }
 
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -24,15 +27,28 @@
   }
 }
 
+/* -----------------------------------------
+   COMPONENTS
+------------------------------------------ */
 @layer components {
+
+  /* GLASS CARD — DARK MODE OPTIMIZED */
   .glass-card {
-    background-color: rgba(255, 255, 255, 0.35);
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(255, 77, 166, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(22px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    transition: 0.3s ease;
   }
-  
+
+  .glass-card:hover {
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.15),
+                0 0 15px rgba(255, 77, 166, 0.35);
+    transform: translateY(-3px);
+  }
+
+  /* BUTTONS – IGNITERS THEME */
   .gradient-btn {
     background: linear-gradient(to right, #FF4DA6, #FF8A29);
     color: white;
@@ -41,20 +57,44 @@
     border-radius: 12px;
     transition: all 0.3s ease;
   }
-  
+
   .gradient-btn:hover {
-    box-shadow: 0 0 20px rgba(255, 77, 166, 0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(255, 77, 166, 0.45),
+                0 0 15px rgba(255, 138, 41, 0.35);
   }
-  
-  .hover-glow {
-    transition: all 0.3s ease;
+
+  /* ANALYTICS SPECIAL HOVER */
+  .analytics-card:hover {
+    box-shadow: 0 0 20px rgba(255, 77, 166, 0.4),
+                0 0 30px rgba(255, 138, 41, 0.3);
+    transform: translateY(-4px);
   }
-  
-  .hover-glow:hover {
-    box-shadow: 0 0 20px rgba(255, 77, 166, 0.25);
+
+  /* DARK INPUT STYLES */
+  .input-dark {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    border-radius: 10px;
+    transition: 0.3s ease;
+  }
+
+  .input-dark::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .input-dark:focus {
+    border-color: #FF4DA6;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 10px #FF4DA6;
+    outline: none;
   }
 }
 
+/* -----------------------------------------
+   UTILITIES
+------------------------------------------ */
 @layer utilities {
   .line-clamp-3 {
     overflow: hidden;
@@ -64,57 +104,71 @@
   }
 }
 
-/* Custom scrollbar */
+/* -----------------------------------------
+   SCROLLBAR
+------------------------------------------ */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #111;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #FF4DA6;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #FF8A29;
 }
 
-/* Animation keyframes */
+/* -----------------------------------------
+   KEYFRAME ANIMATIONS
+------------------------------------------ */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
 
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
-}
+.fade-in { animation: fadeIn 0.5s ease-in-out; }
+.slide-up { animation: slideUp 0.6s ease-out; }
 
-.slide-up {
-  animation: slideUp 0.6s ease-out;
-}
+/* -----------------------------------------
+   HERO BACKGROUND LOGO (User Website)
+------------------------------------------ */
 .hero-background {
   background-image: url('/src/assets/background-logo.png');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0.03;
+}
+
+/* -----------------------------------------
+   DROPDOWNS IN DARK MODE
+------------------------------------------ */
+select, option {
+  background: #111 !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* -----------------------------------------
+   STARLIGHT BACKGROUND FOR ADMIN DASHBOARD
+------------------------------------------ */
+.admin-stars {
+  background-image: url('/stars.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3;
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
