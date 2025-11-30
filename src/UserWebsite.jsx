@@ -108,7 +108,7 @@ const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
             p-4 rounded-b-2xl shadow-[0_0_25px_rgba(255,115,0,0.25)]
           "
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0"> 
             {/* LOGO + TYPEWRITER */}
             <div className="flex items-center gap-4">
               <img

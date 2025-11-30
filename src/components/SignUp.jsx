@@ -210,17 +210,18 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
                   <label className="text-sm text-gray-200">Password *</label>
                   <div className="relative">
                     <input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                      placeholder="Create a password"
-                      className="w-full px-4 py-3 pr-12 mt-1 bg-white/10 border border-white/20 
-                        rounded-xl text-white placeholder-gray-400 
-                        focus:ring-2 focus:ring-hot-pink backdrop-blur-md"
-                    />
-
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    placeholder="Create a password"
+                    className="w-full px-4 py-3 pr-12 mt-1 bg-white/10 border border-white/20 
+                      rounded-xl text-white placeholder-gray-400 
+                      focus:ring-2 focus:ring-hot-pink backdrop-blur-md
+                      [&::-ms-reveal]:hidden [&::-ms-clear]:hidden
+                      [input::-webkit-credentials-auto-fill-button]:hidden"
+                  />
                     {/* Eye */}
                     <button
                       type="button"
@@ -250,9 +251,10 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
                       placeholder="Re-enter your password"
                       className="w-full px-4 py-3 pr-12 mt-1 bg-white/10 border border-white/20 
                         rounded-xl text-white placeholder-gray-400 
-                        focus:ring-2 focus:ring-hot-pink backdrop-blur-md"
+                        focus:ring-2 focus:ring-hot-pink backdrop-blur-md
+                        [&::-ms-reveal]:hidden [&::-ms-clear]:hidden
+                        [input::-webkit-credentials-auto-fill-button]:hidden"
                     />
-
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword((p) => !p)}

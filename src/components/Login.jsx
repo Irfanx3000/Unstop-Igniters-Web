@@ -175,17 +175,21 @@ const Login = ({ onClose, onSwitchToSignup }) => {
                   className="w-full px-4 py-3 pr-12 text-base 
                     bg-white/10 border border-white/20 text-white 
                     rounded-xl focus:ring-2 focus:ring-hot-pink 
-                    placeholder-gray-400 backdrop-blur-md"
+                    placeholder-gray-400 backdrop-blur-md
+                    [&::-ms-reveal]:hidden [&::-ms-clear]:hidden
+                    [input::-webkit-credentials-auto-fill-button]:hidden"
                   placeholder="Enter your password"
                 />
 
+                {/* 👁 SINGLE EYE ICON (Fixed) */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-4 flex items-center text-gray-300 hover:text-white"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 
+                    text-gray-300 hover:text-white"
                 >
                   {showPassword ? (
-                    // Hide
+                    // Hide icon
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="w-5 h-5"
@@ -197,11 +201,11 @@ const Login = ({ onClose, onSwitchToSignup }) => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="1.5"
-                        d="M3 3l18 18M9.88 9.88a3 3 0 104.24 4.24M10.6 5.39A9 9 0 0121 12a9.05 9.05 0 01-1.6 3.79M6.26 6.26A9 9 0 003 12a9 9 0 008.4 6.6"
+                        d="M3 3l18 18M9.88 9.88a3 3 0 104.24 4.24M10.6 5.39a9 9 0 0110.4 6.61M6.26 6.26A9 9 0 003 12a9 9 0 008.4 6.6"
                       />
                     </svg>
                   ) : (
-                    // Show
+                    // Show icon
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="w-5 h-5"
@@ -221,6 +225,7 @@ const Login = ({ onClose, onSwitchToSignup }) => {
                 </button>
               </div>
             </div>
+
 
             {/* Submit */}
             <motion.button
