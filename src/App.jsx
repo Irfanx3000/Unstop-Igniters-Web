@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import UserWebsite from './UserWebsite'
 import Login from './components/Login'
-import Signup from './components/Signup'
+import Signup from "./components/SignUp";
 import AdminDashboard from './admin/AdminDashboard'
 
 

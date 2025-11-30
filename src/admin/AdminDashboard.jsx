@@ -53,7 +53,6 @@ const AdminDashboard = ({ onViewUserWebsite }) => {
 
       {/* ⭐ Background (same as login) */}
       <div className="absolute inset-0 bg-black"></div>
-      <div className="absolute inset-0 bg-[url('/stars.png')] opacity-40 mix-blend-screen"></div>
 
       {/* 🌌 Nebula glows */}
       <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-pink-500/20 blur-[180px]"></div>

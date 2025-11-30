@@ -165,7 +165,6 @@ select, option {
    STARLIGHT BACKGROUND FOR ADMIN DASHBOARD
 ------------------------------------------ */
 .admin-stars {
-  background-image: url('/stars.png');
   background-size: cover;
   background-position: center;
   opacity: 0.3;
