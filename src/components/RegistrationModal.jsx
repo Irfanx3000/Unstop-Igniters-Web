@@ -199,7 +199,7 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
                       required
                       disabled={!user}
                       className="w-full px-4 py-3 bg-white/10 text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-hot-pink placeholder-gray-300 disabled:opacity-50"
-                      placeholder="e.g., 1st Year / TY / Final Year"
+                      placeholder="e.g., FY/ SY / TY "
                     />
                   </div>
 
