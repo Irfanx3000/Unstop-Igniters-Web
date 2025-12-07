@@ -14,15 +14,15 @@
     background-color: black;
     color: white;
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-      'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-      'Helvetica Neue', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
       monospace;
   }
 }
@@ -31,8 +31,7 @@
    COMPONENTS
 ------------------------------------------ */
 @layer components {
-
-  /* GLASS CARD — DARK MODE OPTIMIZED */
+  /* GLASS CARD (Dark Mode) */
   .glass-card {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(22px);
@@ -44,13 +43,13 @@
   .glass-card:hover {
     border-color: rgba(255, 255, 255, 0.35);
     box-shadow: 0 0 25px rgba(255, 255, 255, 0.15),
-                0 0 15px rgba(255, 77, 166, 0.35);
+      0 0 15px rgba(255, 77, 166, 0.35);
     transform: translateY(-3px);
   }
 
-  /* BUTTONS – IGNITERS THEME */
+  /* IGNITERS BUTTON */
   .gradient-btn {
-    background: linear-gradient(to right, #FF4DA6, #FF8A29);
+    background: linear-gradient(to right, #ff4da6, #ff8a29);
     color: white;
     font-weight: 600;
     padding: 12px 24px;
@@ -61,17 +60,16 @@
   .gradient-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 0 20px rgba(255, 77, 166, 0.45),
-                0 0 15px rgba(255, 138, 41, 0.35);
+      0 0 15px rgba(255, 138, 41, 0.35);
   }
 
-  /* ANALYTICS SPECIAL HOVER */
   .analytics-card:hover {
     box-shadow: 0 0 20px rgba(255, 77, 166, 0.4),
-                0 0 30px rgba(255, 138, 41, 0.3);
+      0 0 30px rgba(255, 138, 41, 0.3);
     transform: translateY(-4px);
   }
 
-  /* DARK INPUT STYLES */
+  /* DARK INPUTS */
   .input-dark {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.25);
@@ -85,9 +83,9 @@
   }
 
   .input-dark:focus {
-    border-color: #FF4DA6;
+    border-color: #ff4da6;
     background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 10px #FF4DA6;
+    box-shadow: 0 0 10px #ff4da6;
     outline: none;
   }
 }
@@ -117,35 +115,50 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FF4DA6;
+  background: #ff4da6;
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF8A29;
+  background: #ff8a29;
 }
 
 /* -----------------------------------------
    KEYFRAME ANIMATIONS
 ------------------------------------------ */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.fade-in { animation: fadeIn 0.5s ease-in-out; }
-.slide-up { animation: slideUp 0.6s ease-out; }
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out;
+}
 
 /* -----------------------------------------
-   HERO BACKGROUND LOGO (User Website)
+   HERO BACKGROUND LOGO
 ------------------------------------------ */
 .hero-background {
-  background-image: url('/src/assets/background-logo.png');
+  background-image: url("/src/assets/background-logo.png");
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -153,16 +166,17 @@
 }
 
 /* -----------------------------------------
-   DROPDOWNS IN DARK MODE
+   SELECT DROPDOWNS DARK THEME
 ------------------------------------------ */
-select, option {
+select,
+option {
   background: #111 !important;
   color: white !important;
   border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 /* -----------------------------------------
-   STARLIGHT BACKGROUND FOR ADMIN DASHBOARD
+   STARLIGHT BACKGROUND (Admin)
 ------------------------------------------ */
 .admin-stars {
   background-size: cover;
@@ -171,3 +185,34 @@ select, option {
   mix-blend-mode: screen;
   pointer-events: none;
 }
+
+/* -----------------------------------------
+   3D FLIP CARD UTILITIES (Corrected)
+------------------------------------------ */
+.event-perspective {
+  perspective: 1000px;
+}
+
+.event-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.event-backface-hidden {
+  backface-visibility: hidden;
+}
+.perspective {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotateY-180 {
+  transform: rotateY(180deg);
+}
+

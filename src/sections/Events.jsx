@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEvents } from "../hooks/useEvents";
-import GlassCard from "../components/GlassCard";
 import RegistrationModal from "../components/RegistrationModal";
+import EventCard from "../components/EventCard"; 
 
 const Events = () => {
   const [activeTab, setActiveTab] = useState("unstop");
@@ -10,89 +10,82 @@ const Events = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [slide, setSlide] = useState(0);
 
-  const { events: unstopEvents, loading: unstopLoading } = useEvents("unstop");
-  const { events: ignitersEvents, loading: ignitersLoading } =
-    useEvents("igniters");
+  const [cardsPerSlide, setCardsPerSlide] = useState(3);
 
+  const { events: unstopEvents } = useEvents("unstop");
+  const { events: ignitersEvents } = useEvents("igniters");
+
+  // Select current tab events
   const events = activeTab === "unstop" ? unstopEvents : ignitersEvents;
 
-  // Number of cards per slide (responsive)
-  const getCardsPerSlide = () => {
-    if (window.innerWidth < 640) return 1; // mobile
-    if (window.innerWidth < 1024) return 2; // tablet
-    return 3; // desktop
+  /* ------------------------ RESPONSIVENESS ------------------------ */
+  const updateCardsPerSlide = () => {
+    if (window.innerWidth < 640) setCardsPerSlide(1);
+    else if (window.innerWidth < 1024) setCardsPerSlide(2);
+    else setCardsPerSlide(3);
   };
 
-  const cardsPerSlide = getCardsPerSlide();
+  useEffect(() => {
+    updateCardsPerSlide();
+    window.addEventListener("resize", updateCardsPerSlide);
+    return () => window.removeEventListener("resize", updateCardsPerSlide);
+  }, []);
+
   const totalSlides = Math.ceil(events.length / cardsPerSlide);
 
-  const goNext = () => {
-    setSlide((prev) => (prev + 1) % totalSlides);
-  };
+  const goNext = () => setSlide((prev) => (prev + 1) % totalSlides);
+  const goPrev = () => setSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
 
-  const goPrev = () => {
-    setSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
-  };
+  /* ------------------------ REGISTRATION HANDLER ------------------------ */
 
-  const handleEventClick = (event) => {
-    if (activeTab === "igniters") {
-      setSelectedEvent(event);
-      setModalOpen(true);
-    } else if (event.external_link) {
-      window.open(event.external_link, "_blank");
+  const openEvent = (event) => {
+    if (activeTab === "unstop") {
+      if (event.external_link) window.open(event.external_link, "_blank");
+      return;
     }
+
+    setSelectedEvent(event);
+    setModalOpen(true);
   };
+
+  /* ------------------------ MAIN JSX ------------------------ */
 
   return (
     <section className="min-h-screen py-20 relative bg-[#050505] overflow-hidden">
-      {/* Nebula Background */}
+      {/* 🔥 Nebula BG */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-pink-600/20 blur-[180px] rounded-full"></div>
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-orange-500/20 blur-[180px] rounded-full"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-20">
-        
-        {/* Title */}
-        <h2 className="text-5xl md:text-6xl font-black text-center mb-8">
+        {/* TITLE */}
+        <h2 className="text-5xl md:text-6xl font-black text-center mb-12">
           <span className="text-hot-pink">Events</span>{" "}
           <span className="text-white">& Activities</span>
         </h2>
 
-        {/* Tabs */}
+        {/* TABS */}
         <div className="flex justify-center mb-10">
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-2 inline-flex shadow-lg">
-            <button
-              onClick={() => {
-                setActiveTab("unstop");
-                setSlide(0);
-              }}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all ${
-                activeTab === "unstop"
-                  ? "gradient-btn text-white"
-                  : "text-gray-300"
-              }`}
-            >
-              Unstop Events
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("igniters");
-                setSlide(0);
-              }}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all ${
-                activeTab === "igniters"
-                  ? "gradient-btn text-white"
-                  : "text-gray-300"
-              }`}
-            >
-              Igniters Events
-            </button>
+            {["unstop", "igniters"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  setSlide(0);
+                }}
+                className={`px-8 py-3 rounded-xl font-semibold transition-all ${
+                  activeTab === tab ? "gradient-btn" : "text-gray-300"
+                }`}
+              >
+                {tab === "unstop" ? "Unstop Events" : "Igniters Events"}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Carousel Wrapper */}
+        {/* CAROUSEL */}
         <div className="relative w-full overflow-hidden">
           <AnimatePresence initial={false} mode="wait">
             <motion.div
@@ -106,61 +99,33 @@ const Events = () => {
               {events
                 .slice(slide * cardsPerSlide, slide * cardsPerSlide + cardsPerSlide)
                 .map((event) => (
-                  <GlassCard
+                  <EventCard
                     key={event.id}
-                    hover
-                    onClick={() => handleEventClick(event)}
-                    className="p-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-[0_0_35px_rgba(255,44,165,0.25)] cursor-pointer"
-                  >
-                    {/* Badge */}
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-4 ${
-                        event.event_type === "unstop"
-                          ? "bg-blue-500/20 text-blue-300"
-                          : "bg-hot-pink/20 text-hot-pink"
-                      }`}
-                    >
-                      {event.event_type}
-                    </span>
-
-                    {/* Title */}
-                    <h3 className="text-xl font-bold text-white mb-3">
-                      {event.title}
-                    </h3>
-
-                    <p className="text-gray-300 mb-4">{event.description}</p>
-
-                    {/* Date */}
-                    {event.event_date && (
-                      <div className="text-gray-400 mb-4">
-                        {new Date(event.event_date).toLocaleDateString()}
-                      </div>
-                    )}
-
-                    <button className="w-full gradient-btn py-3 rounded-xl font-semibold">
-                      {activeTab === "unstop"
-                        ? "View on Unstop"
-                        : "Register Now"}
-                    </button>
-                  </GlassCard>
+                    event={event}
+                    onRegister={() => openEvent(event)}
+                  />
                 ))}
             </motion.div>
           </AnimatePresence>
 
-          {/* ARROW BUTTONS */}
-          <button
-            onClick={goPrev}
-            className="absolute top-1/2 -left-3 transform -translate-y-1/2 bg-white/10 text-white p-3 rounded-full backdrop-blur-xl border border-white/20 hover:bg-white/20"
-          >
-            ‹
-          </button>
+          {/* ARROWS */}
+          {events.length > cardsPerSlide && (
+            <>
+              <button
+                onClick={goPrev}
+                className="absolute top-1/2 -left-3 transform -translate-y-1/2 bg-white/10 text-white p-3 rounded-full backdrop-blur-xl border border-white/20 hover:bg-white/20"
+              >
+                ‹
+              </button>
 
-          <button
-            onClick={goNext}
-            className="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white/10 text-white p-3 rounded-full backdrop-blur-xl border border-white/20 hover:bg-white/20"
-          >
-            ›
-          </button>
+              <button
+                onClick={goNext}
+                className="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white/10 text-white p-3 rounded-full backdrop-blur-xl border border-white/20 hover:bg-white/20"
+              >
+                ›
+              </button>
+            </>
+          )}
         </div>
 
         {/* DOTS */}
@@ -178,7 +143,7 @@ const Events = () => {
           ))}
         </div>
 
-        {/* Modals */}
+        {/* REGISTER MODAL */}
         {selectedEvent && (
           <RegistrationModal
             event={selectedEvent}
