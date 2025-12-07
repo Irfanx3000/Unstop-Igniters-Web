@@ -3,19 +3,29 @@ import { motion } from "framer-motion";
 
 const EventCard = ({ event, onRegister }) => {
   const [flipped, setFlipped] = useState(false);
-  const [cardHeight, setCardHeight] = useState("auto");
+  const [cardHeight, setCardHeight] = useState(350);
   const imgRef = useRef(null);
 
-  // Auto adjust height based on image
   useEffect(() => {
-    if (imgRef.current) {
-      const updateSize = () => {
-        setCardHeight(imgRef.current.offsetHeight + 80);
-      };
-      updateSize();
-      window.addEventListener("resize", updateSize);
-      return () => window.removeEventListener("resize", updateSize);
-    }
+    if (!imgRef.current) return;
+
+    const updateHeight = () => {
+      const imgH = imgRef.current.offsetHeight;
+
+      // Title bar height (bottom black bar)
+      const titleH = 70;
+
+      // Final card height = image + title (no unnecessary extra padding)
+      const finalH = imgH + titleH;
+
+      // Apply safe minimum
+      setCardHeight(Math.max(320, finalH));
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+
+    return () => window.removeEventListener("resize", updateHeight);
   }, [event.image_url]);
 
   return (
@@ -28,29 +38,23 @@ const EventCard = ({ event, onRegister }) => {
         className="relative w-full h-full transition-transform duration-700 preserve-3d"
         animate={{ rotateY: flipped ? 180 : 0 }}
       >
+        {/* FRONT */}
+        <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden bg-black">
 
-        {/* --------------------------------------------------
-            FRONT SIDE
-        -------------------------------------------------- */}
-        <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden bg-black/40">
-
-          {/* CLICK TO FLIP — desktop only shows on hover */}
+          {/* Hover "Click to flip" */}
           <div
             className="
               absolute top-3 left-1/2 -translate-x-1/2
               px-4 py-1 text-white text-sm font-semibold
               bg-black/40 backdrop-blur-md rounded-full shadow-md
-              z-20
-              opacity-0 group-hover:opacity-100
-              transition-opacity duration-300
-              md:opacity-0
-              sm:opacity-100 sm:group-hover:opacity-100
+              opacity-0 group-hover:opacity-100 transition-all duration-300
+              sm:opacity-100
             "
           >
             Click to flip →
           </div>
 
-          {/* IMAGE */}
+          {/* EVENT IMAGE */}
           <img
             ref={imgRef}
             src={event.image_url}
@@ -58,30 +62,20 @@ const EventCard = ({ event, onRegister }) => {
             className="w-full object-contain rounded-t-2xl"
           />
 
-          {/* EVENT TITLE (always visible) */}
-          <div
-            className="
-              absolute bottom-0 left-0 right-0 
-              bg-black/70 backdrop-blur-md 
-              text-center px-3 py-2 rounded-b-2xl
-            "
-          >
-            <h3 className="text-lg md:text-xl font-bold text-white">
-              {event.title}
-            </h3>
+          {/* TITLE BAR */}
+          <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg text-center py-3 rounded-b-2xl">
+            <h3 className="text-xl font-bold text-white">{event.title}</h3>
           </div>
         </div>
 
-        {/* --------------------------------------------------
-            BACK SIDE (Details + Register)
-        -------------------------------------------------- */}
+        {/* BACK SIDE */}
         <div
           className="
             absolute inset-0 backface-hidden rotateY-180
             rounded-2xl bg-white/10 backdrop-blur-xl
             p-5 flex flex-col justify-between
           "
-          style={{ minHeight: cardHeight }}
+          style={{ height: cardHeight }}
         >
           <div>
             <h3 className="text-2xl font-bold text-hot-pink mb-2">
@@ -103,7 +97,6 @@ const EventCard = ({ event, onRegister }) => {
             Register
           </button>
         </div>
-
       </motion.div>
     </div>
   );
