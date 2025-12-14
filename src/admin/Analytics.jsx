@@ -57,7 +57,7 @@ const Analytics = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255,44,165,0.15),transparent_70%)]"></div>
 
         {/** Tiny stars */}
-        <div className="absolute inset-0 bg-[url('/stars.png')] opacity-40 mix-blend-screen"></div>
+        <div className="absolute inset-0')] opacity-40 mix-blend-screen"></div>
       </div>
 
       <div className="relative z-10 space-y-10">

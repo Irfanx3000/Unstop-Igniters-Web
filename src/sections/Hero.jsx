@@ -6,9 +6,11 @@ import logo from "../assets/background-logo.png";
 const Hero = () => {
   return (
     <section
+      id="hero"
       className="
-        min-h-screen flex items-center justify-center 
-        relative overflow-hidden 
+        relative -mt-24 pt-24   /* pulls hero under navbar, keeps content visible */
+        min-h-screen flex items-center justify-center
+        overflow-hidden
         bg-[#050505]
         text-white
       "
@@ -40,7 +42,7 @@ const Hero = () => {
         />
       </div>
 
-      {/* ⭐ Optional Background LOGO (very faint) */}
+      {/* ⭐ Very faint background logo */}
       <div className="absolute inset-0 opacity-[0.05] flex items-center justify-center z-0">
         <img
           src={logo}

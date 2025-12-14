@@ -49,27 +49,36 @@ const AdminDashboard = ({ onViewUserWebsite }) => {
   };
 
   return (
-    <div className="min-h-screen relative flex">
+    /* 🔒 ROOT CONTAINER — FULL HEIGHT, NO SCROLL */
+    <div className="h-screen relative overflow-hidden">
 
-      {/* ⭐ Background (same as login) */}
+      {/* ⭐ Background */}
       <div className="absolute inset-0 bg-black"></div>
 
       {/* 🌌 Nebula glows */}
       <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-pink-500/20 blur-[180px]"></div>
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-orange-500/20 blur-[180px]"></div>
 
-      {/* Slight dark overlay */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
 
-      {/* MAIN LAYOUT (unchanged) */}
-      <div className="relative z-10 flex w-full">
+      {/* MAIN LAYOUT */}
+      <div className="relative z-10 flex h-full">
 
-        {/* SIDEBAR — EXACT SAME STRUCTURE */}
+        {/* ================= SIDEBAR (FIXED) ================= */}
         <motion.nav
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="w-64 min-h-screen p-6 border-r border-white/10 
-                     bg-white/10 backdrop-blur-xl shadow-xl"
+          className="
+            w-64 
+            h-screen 
+            sticky top-0 
+            shrink-0
+            p-6 
+            border-r border-white/10 
+            bg-white/10 backdrop-blur-xl 
+            shadow-xl
+          "
         >
           <h1 className="text-2xl font-extrabold text-white mb-1">
             Admin Dashboard
@@ -113,12 +122,18 @@ const AdminDashboard = ({ onViewUserWebsite }) => {
           </div>
         </motion.nav>
 
-        {/* MAIN CONTENT — SAME STRUCTURE */}
+        {/* ================= CONTENT (SCROLLABLE) ================= */}
         <motion.main
           key={activeTab}
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex-1 p-8 text-white"
+          className="
+            flex-1 
+            h-full 
+            overflow-y-auto 
+            p-8 
+            text-white
+          "
         >
           <AnimatePresence mode="wait">
             {renderContent()}
