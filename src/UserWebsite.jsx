@@ -300,7 +300,7 @@ const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
               </li>
               <li>
                 <a href="https://github.com/Irfanx3000" target="_blank" className="hover:text-hot-pink">
-                  ⭐ Sohail Ansari 
+                  ⭐ Mohd Sohel Ansari 
                 </a>
               </li>
               <li>

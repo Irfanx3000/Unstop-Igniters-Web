@@ -28,7 +28,7 @@ const Hero = () => {
 
   /* ================= SEARCH ================= */
   const suggestions = useMemo(() => {
-    if (!query || events.length === 0) return [];
+    if (!query) return [];
     return events
       .filter((e) =>
         e?.title?.toLowerCase().includes(query.toLowerCase())
@@ -36,7 +36,7 @@ const Hero = () => {
       .slice(0, 5);
   }, [query, events]);
 
-  /* ================= STATS (DYNAMIC) ================= */
+  /* ================= STATS ================= */
   const stats = useMemo(() => {
     const total = events.length;
     const activeCount = events.filter(
@@ -53,7 +53,6 @@ const Hero = () => {
     ];
   }, [events]);
 
-  /* ================= SAFE DERIVED ================= */
   const hasEvents = events.length > 0;
   const safeIndex = hasEvents ? active % events.length : 0;
   const current = hasEvents ? events[safeIndex] : null;
@@ -62,33 +61,41 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="relative -mt-24 pt-24 min-h-screen flex items-center overflow-hidden bg-[#050505] text-white"
+      className="
+        relative
+        pt-28 md:pt-24
+        min-h-screen
+        flex items-start md:items-center
+        overflow-hidden
+        bg-[#050505]
+        text-white
+      "
     >
-      {/* 🌌 Background */}
+      {/* 🌌 BACKGROUND */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 left-0 w-[650px] h-[600px] bg-pink-600/25 blur-[180px] rounded-full" />
         <div className="absolute bottom-0 right-0 w-[700px] h-[650px] bg-orange-500/20 blur-[200px] rounded-full" />
       </div>
 
-      {/* Watermark */}
+      {/* WATERMARK */}
       <div className="absolute inset-0 opacity-[0.05] flex items-center justify-center z-0">
-        <img src={logo} alt="logo" className="w-[800px]" />
+        <img src={logo} alt="logo" className="w-[600px] md:w-[800px]" />
       </div>
 
-      {/* ================= LOADING ================= */}
+      {/* LOADING */}
       {!hasEvents && (
         <div className="relative z-20 w-full text-center text-gray-400">
           Loading events...
         </div>
       )}
 
-      {/* ================= CONTENT ================= */}
+      {/* CONTENT */}
       {hasEvents && (
-        <div className="container mx-auto px-6 relative z-20 grid lg:grid-cols-2 gap-16 items-center">
-
+        <div className="container mx-auto px-4 md:px-6 relative z-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          
           {/* LEFT */}
           <div>
-            <div className="flex gap-3 mb-6">
+            <div className="flex flex-wrap gap-3 mb-6">
               <span className="px-4 py-1.5 rounded-full text-sm font-semibold bg-hot-pink/20 text-hot-pink border border-hot-pink/30">
                 🚀 Unstop Igniters
               </span>
@@ -97,7 +104,7 @@ const Hero = () => {
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-black leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight">
               Ignite <br />
               <span className="bg-gradient-to-r from-hot-pink to-orange-400 bg-clip-text text-transparent">
                 Startup
@@ -105,22 +112,22 @@ const Hero = () => {
               Excellence
             </h1>
 
-            <p className="mt-6 text-lg text-gray-300 max-w-xl">
+            <p className="mt-6 text-base md:text-lg text-gray-300 max-w-xl">
               A premium student-driven ecosystem fostering innovation,
               leadership, and startup culture through impactful events.
             </p>
 
-            {/* 🔍 Search */}
+            {/* SEARCH */}
             <div className="relative mt-8 max-w-xl">
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search events..."
-                className="w-full px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white"
+                className="w-full px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-hot-pink"
               />
 
               {suggestions.length > 0 && (
-                <div className="absolute mt-2 w-full bg-black/80 border border-white/20 rounded-xl overflow-hidden z-30">
+                <div className="absolute mt-2 w-full bg-black/90 border border-white/20 rounded-xl overflow-hidden z-30">
                   {suggestions.map((e) => (
                     <button
                       key={e.id}
@@ -138,16 +145,16 @@ const Hero = () => {
               )}
             </div>
 
-            {/* 📊 DYNAMIC STATS */}
-            <div className="mt-10 grid grid-cols-3 gap-6 max-w-xl">
+            {/* STATS */}
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-xl">
               {stats.map((s) => (
                 <Stat key={s.label} value={s.value} label={s.label} />
               ))}
             </div>
           </div>
 
-          {/* RIGHT (CLICKABLE CARD) */}
-          <div className="relative h-[460px]">
+          {/* RIGHT */}
+          <div className="relative h-[360px] sm:h-[400px] lg:h-[460px] mt-10 lg:mt-0">
             {next && (
               <motion.div
                 key={next.id}
@@ -210,7 +217,7 @@ const HeroEventCard = ({ event, muted }) => {
 
   return (
     <div className="group">
-      <div className="relative h-60 overflow-hidden rounded-2xl">
+      <div className="relative h-44 sm:h-52 lg:h-60 overflow-hidden rounded-2xl">
         <img
           src={event.image_url}
           alt={event.title}
