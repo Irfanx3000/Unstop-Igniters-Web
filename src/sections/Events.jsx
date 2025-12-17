@@ -10,7 +10,7 @@ const statusStyles = {
 };
 
 const Events = () => {
-  const [activeTab, setActiveTab] = useState("unstop");
+  const [activeTab, setActiveTab] = useState("igniters");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -49,7 +49,7 @@ const Events = () => {
         {/* TABS */}
         <div className="flex justify-center mb-12">
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-2 inline-flex">
-            {["unstop", "igniters"].map((tab) => (
+            {["igniters", "unstop"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
