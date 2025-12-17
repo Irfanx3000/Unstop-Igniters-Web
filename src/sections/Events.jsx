@@ -102,17 +102,27 @@ const Events = () => {
                   {event.description}
                 </p>
                 <div className="text-sm flex flex-wrap gap-6 items-center mt-2">
-
-                  {event.event_date && (
-                    <span className="flex items-center gap-2 text-orange-300 font-medium">
-                      <CalendarDaysIcon className="w-4 h-4 text-orange-400" />
-                      {new Date(event.event_date).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
-                  )}
+                 {event.event_date && (
+                      <span className="flex items-center gap-2 text-orange-300 font-medium">
+                        <CalendarDaysIcon className="w-4 h-4 text-orange-400" />
+                        {new Date(event.event_date).toLocaleDateString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                        {event.event_end_date &&
+                          event.event_end_date !== event.event_date && (
+                            <>
+                              {" "}–{" "}
+                              {new Date(event.event_end_date).toLocaleDateString("en-IN", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </>
+                          )}
+                      </span>
+                    )}
                   {event.venue && (
                     <span className="flex items-center gap-2 text-gray-400">
                       <MapPinIcon className="w-4 h-4 text-gray-400" />

@@ -298,7 +298,7 @@ const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
         </div>
 
         <div className="text-center text-white/40 text-sm mt-10">
-          © 2024 Igniters Club. All rights reserved.
+          © 2025 Igniters Club. All rights reserved.
         </div>
       </footer>
     </div>

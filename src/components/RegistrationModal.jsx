@@ -38,7 +38,6 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
       [e.target.name]: e.target.value,
     }));
   };
-
   // 📧 EmailJS sender
   const sendConfirmationEmail = async () => {
     try {
