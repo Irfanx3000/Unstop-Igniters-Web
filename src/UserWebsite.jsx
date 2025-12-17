@@ -284,13 +284,38 @@ const UserWebsite = ({ onViewAdmin, onShowAuth }) => {
 
             <ul className="space-y-2 text-white/80">
               <li>
-                <a href="https://github.com/Irfanx3000" target="_blank" className="hover:text-hot-pink">
-                  ⭐ Irfan Shaikh — Tech Lead
+                <a href="https://github.com/LabbaiIrfan" target="_blank" className="hover:text-hot-pink">
+                  ⭐ Irfan Labbai 
                 </a>
               </li>
               <li>
-                <a href="https://github.com/LabbaiIrfan" target="_blank" className="hover:text-hot-pink">
-                  ⭐ Irfan Labbai — President
+                <a href="https://github.com/Irfanx3000" target="_blank" className="hover:text-hot-pink">
+                  ⭐ Irfan Shaikh 
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/affanshaikh-dev" target="_blank" className="hover:text-hot-pink">
+                  ⭐ Affan Shaikh
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/Irfanx3000" target="_blank" className="hover:text-hot-pink">
+                  ⭐ Sohail Ansari 
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/Irfanx3000" target="_blank" className="hover:text-hot-pink">
+                  ⭐ Aaysha Quraishi 
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/Irfanx3000" target="_blank" className="hover:text-hot-pink">
+                  ⭐ Mariyam Khan Deshmukh
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/Irfanx3000" target="_blank" className="hover:text-hot-pink">
+                  ⭐ Burhan Parkar 
                 </a>
               </li>
             </ul>
