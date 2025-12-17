@@ -62,7 +62,7 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="relative -mt-24 pt-24 min-h-screen flex items-center overflow-hidden bg-[#050505] text-white"
+      className="relative -mt-40 pt-10 pb-80 min-h-screen flex items-center overflow-hidden bg-[#050505] text-white"
     >
       {/* 🌌 Background */}
       <div className="absolute inset-0 z-0">
@@ -100,14 +100,14 @@ const Hero = () => {
             <h1 className="text-5xl md:text-6xl font-black leading-tight">
               Ignite <br />
               <span className="bg-gradient-to-r from-hot-pink to-orange-400 bg-clip-text text-transparent">
-                Startup
+                Your
               </span>{" "}
               Excellence
             </h1>
 
             <p className="mt-6 text-lg text-gray-300 max-w-xl">
               A premium student-driven ecosystem fostering innovation,
-              leadership, and startup culture through impactful events.
+              leadership, and culture through impactful events.
             </p>
 
             {/* 🔍 Search */}
@@ -210,7 +210,7 @@ const HeroEventCard = ({ event, muted }) => {
 
   return (
     <div className="group">
-      <div className="relative h-60 overflow-hidden rounded-2xl">
+      <div className="relative h-full overflow-hidden rounded-2xl">
         <img
           src={event.image_url}
           alt={event.title}

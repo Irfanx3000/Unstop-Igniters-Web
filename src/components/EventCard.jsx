@@ -11,7 +11,7 @@ const EventCard = ({ event, onRegister }) => {
           - w-full md:w-52: Full width on mobile, fixed width on desktop
           - h-48 md:h-36: Taller on mobile, compact rectangular on desktop
       */}
-      <div className="w-full md:w-52 h-48 md:h-36 shrink-0 rounded-xl overflow-hidden relative">
+      <div className="w-full md:w-52  shrink-0 rounded-xl overflow-hidden relative">
         <img
           src={event.image_url}
           alt={event.title}
