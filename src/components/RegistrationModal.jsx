@@ -3,6 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../supabase/client";
 import Starfield from "./StarField"; // ⭐ Stars background
+import emailjs from "emailjs-com";
+
+// 🔐 EmailJS ENV
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 const RegistrationModal = ({ event, isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -31,6 +37,26 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  // 📧 EmailJS sender
+  const sendConfirmationEmail = async () => {
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          name: formData.name,
+          email: formData.email,
+          event_name: event.title,
+          event_date: "7 January 2026",
+          venue: "AIKTC Campus",
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+    } catch (error) {
+      console.error("Email sending failed:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -71,6 +97,9 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
       ]);
 
       if (error) throw error;
+
+      // 📧 Send confirmation email (EmailJS)
+      sendConfirmationEmail();
 
       setSuccess(true);
 
@@ -121,15 +150,33 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
             "
           >
             {success ? (
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center py-6">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="text-center py-6"
+              >
                 <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-10 h-10 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
-                <h3 className="text-xl font-black text-hot-pink mb-2">Registration Successful!</h3>
+                <h3 className="text-xl font-black text-hot-pink mb-2">
+                  Registration Successful!
+                </h3>
                 <p className="text-gray-200">You are registered for:</p>
-                <p className="font-semibold text-white mt-1">{event.title}</p>
+                <p className="font-semibold text-white mt-1">
+                  {event.title}
+                </p>
               </motion.div>
             ) : (
               <>
@@ -149,7 +196,9 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
                 <form onSubmit={handleSubmit} className="space-y-3">
                   {/* NAME */}
                   <div>
-                    <label className="block text-sm font-medium text-white mb-1">Full Name *</label>
+                    <label className="block text-sm font-medium text-white mb-1">
+                      Full Name *
+                    </label>
                     <input
                       name="name"
                       value={formData.name}
@@ -163,7 +212,9 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
 
                   {/* EMAIL */}
                   <div>
-                    <label className="block text-sm font-medium text-white mb-1">Email *</label>
+                    <label className="block text-sm font-medium text-white mb-1">
+                      Email *
+                    </label>
                     <input
                       name="email"
                       value={formData.email}
@@ -177,7 +228,9 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
 
                   {/* COURSE */}
                   <div>
-                    <label className="block text-sm font-medium text-white mb-1">Course/Department *</label>
+                    <label className="block text-sm font-medium text-white mb-1">
+                      Course/Department *
+                    </label>
                     <input
                       name="course"
                       value={formData.course}
@@ -191,7 +244,9 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
 
                   {/* YEAR */}
                   <div>
-                    <label className="block text-sm font-medium text-white mb-1">Year *</label>
+                    <label className="block text-sm font-medium text-white mb-1">
+                      Year *
+                    </label>
                     <input
                       name="year"
                       value={formData.year}
@@ -199,7 +254,7 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
                       required
                       disabled={!user}
                       className="w-full px-4 py-3 bg-white/10 text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-hot-pink placeholder-gray-300 disabled:opacity-50"
-                      placeholder="e.g., FY/ SY / TY "
+                      placeholder="e.g., FY / SY / TY"
                     />
                   </div>
 
@@ -218,7 +273,11 @@ const RegistrationModal = ({ event, isOpen, onClose }) => {
                       disabled={!user || loading}
                       className="flex-1 gradient-btn rounded-xl disabled:opacity-50"
                     >
-                      {!user ? "Sign In Required" : loading ? "Registering..." : "Register"}
+                      {!user
+                        ? "Sign In Required"
+                        : loading
+                        ? "Registering..."
+                        : "Register"}
                     </button>
                   </div>
                 </form>
