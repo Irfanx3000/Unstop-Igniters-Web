@@ -6,7 +6,7 @@ import logo from "../assets/background-logo.png";
 import { useEvents } from "../hooks/useEvents";
 
 /* =========================================================
-   HERO SECTION (RESPONSIVE FIXED)
+   HERO SECTION
 ========================================================= */
 
 const Hero = () => {
@@ -64,29 +64,29 @@ const Hero = () => {
       id="hero"
       className="
         relative bg-[#050505] text-white overflow-hidden
-        pt-28 md:pt-32 min-h-screen
+        pt-28 sm:pt-32 md:pt-36 min-h-screen
       "
     >
-      {/* 🌌 BACKGROUND */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-0 w-[450px] h-[450px] md:w-[650px] md:h-[600px] bg-pink-600/25 blur-[180px]" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] md:w-[700px] md:h-[650px] bg-orange-500/20 blur-[200px]" />
+      {/* 🌌 Background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-0 w-[420px] h-[420px] sm:w-[520px] sm:h-[520px] md:w-[650px] md:h-[600px] bg-pink-600/25 blur-[180px]" />
+        <div className="absolute bottom-0 right-0 w-[420px] h-[420px] sm:w-[520px] sm:h-[520px] md:w-[700px] md:h-[650px] bg-orange-500/20 blur-[200px]" />
       </div>
 
-      {/* WATERMARK */}
-      <div className="absolute inset-0 opacity-[0.035] flex items-center justify-center -z-10">
+      {/* Watermark */}
+      <div className="absolute inset-0 opacity-[0.04] flex items-center justify-center">
         <img
           src={logo}
           alt="logo"
-          className="w-[500px] md:w-[800px]"
+          className="w-[500px] sm:w-[650px] md:w-[900px]"
         />
       </div>
 
-      <div className="container mx-auto px-5 sm:px-6 relative z-20">
+      <div className="relative z-20 container mx-auto px-4 sm:px-6">
         {/* ================= GRID ================= */}
-        <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-start">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
-          {/* ================= LEFT ================= */}
+          {/* ================= LEFT CONTENT ================= */}
           <div className="max-w-xl">
             <div className="flex flex-wrap gap-3 mb-6">
               <span className="px-4 py-1.5 rounded-full text-sm bg-hot-pink/20 text-hot-pink">
@@ -105,13 +105,13 @@ const Hero = () => {
               Excellence
             </h1>
 
-            <p className="mt-5 text-base sm:text-lg text-gray-300">
+            <p className="mt-5 sm:mt-6 text-base sm:text-lg text-gray-300 max-w-xl">
               A premium student-driven ecosystem fostering innovation,
               leadership, and startup culture through impactful events.
             </p>
 
-            {/* SEARCH */}
-            <div className="relative mt-7">
+            {/* Search */}
+            <div className="relative mt-7 sm:mt-8 max-w-xl">
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -124,7 +124,7 @@ const Hero = () => {
               />
 
               {suggestions.length > 0 && (
-                <div className="absolute mt-2 w-full bg-black/90 border border-white/20 rounded-xl overflow-hidden z-30">
+                <div className="absolute mt-2 w-full bg-black/80 border border-white/20 rounded-xl overflow-hidden z-30">
                   {suggestions.map((e) => (
                     <button
                       key={e.id}
@@ -143,11 +143,11 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* ================= RIGHT ================= */}
-          <div className="flex flex-col gap-8">
+          {/* ================= RIGHT COLUMN ================= */}
+          <div className="flex flex-col gap-6">
 
-            {/* -------- CAROUSEL -------- */}
-            <div className="relative h-[380px] sm:h-[420px] md:h-[460px]">
+            {/* ----------- CAROUSEL ----------- */}
+            <div className="relative h-[360px] sm:h-[400px] md:h-[460px]">
               {next && (
                 <motion.div
                   initial={{ scale: 0.95, opacity: 0.35, y: 30 }}
@@ -155,7 +155,7 @@ const Hero = () => {
                   transition={{ duration: 1 }}
                   className="absolute inset-0 z-10"
                 >
-                  <GlassCard className="p-5 sm:p-6 rounded-3xl bg-white/5">
+                  <GlassCard className="p-4 sm:p-5 md:p-6 rounded-3xl bg-white/5">
                     <HeroEventCard event={next} muted />
                   </GlassCard>
                 </motion.div>
@@ -170,19 +170,12 @@ const Hero = () => {
                         setModalOpen(true);
                       }
                     }}
-                    className="p-5 sm:p-6 rounded-3xl bg-white/10 cursor-pointer"
+                    className="p-4 sm:p-5 md:p-6 rounded-3xl bg-white/10 cursor-pointer"
                   >
                     <HeroEventCard event={current} />
                   </GlassCard>
                 </motion.div>
               )}
-            </div>
-
-            {/* -------- STATS (UNDER CAROUSEL) -------- */}
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center">
-              {stats.map((s) => (
-                <Stat key={s.label} value={s.value} label={s.label} />
-              ))}
             </div>
           </div>
         </div>
@@ -207,19 +200,12 @@ const Hero = () => {
    HELPERS
 ========================================================= */
 
-const Stat = ({ value, label }) => (
-  <div>
-    <h4 className="text-2xl sm:text-3xl font-black">{value}</h4>
-    <p className="text-xs sm:text-sm text-gray-400 mt-1">{label}</p>
-  </div>
-);
-
 const HeroEventCard = ({ event, muted }) => {
   const status = event.registration_status || "active";
 
   return (
     <div className={`group ${muted ? "opacity-70" : ""}`}>
-      <div className="relative h-48 sm:h-56 overflow-hidden rounded-2xl">
+      <div className="relative h-44 sm:h-52 md:h-60 overflow-hidden rounded-2xl">
         <img
           src={event.image_url}
           alt={event.title}
@@ -227,15 +213,17 @@ const HeroEventCard = ({ event, muted }) => {
         />
       </div>
 
-      <div className="mt-5">
+      <div className="mt-4 sm:mt-6">
         <div className="flex justify-between items-center">
-          <h3 className="font-bold text-base sm:text-lg">{event.title}</h3>
+          <h3 className="font-bold text-base sm:text-lg">
+            {event.title}
+          </h3>
           <span className="text-xs px-3 py-1 rounded-full bg-hot-pink/20 text-hot-pink">
             {status.toUpperCase()}
           </span>
         </div>
 
-        <p className="mt-3 text-sm text-gray-400 line-clamp-2">
+        <p className="mt-2 sm:mt-3 text-sm text-gray-400 line-clamp-2">
           {event.description}
         </p>
       </div>
