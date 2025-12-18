@@ -116,20 +116,37 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center text-white"
             >
-              <div className="w-20 h-20 bg-green-500 rounded-full 
-                flex items-center justify-center mx-auto mb-6">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor">
-                  <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-                    d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-
+             <div className="
+              w-20 h-20 
+              rounded-full 
+              mx-auto mb-6
+              flex items-center justify-center
+              bg-yellow-400/20
+              border border-yellow-400/40
+              backdrop-blur-xl
+              shadow-[0_0_30px_rgba(250,204,21,0.35)]
+            ">
+              <svg
+                className="w-10 h-10 text-yellow-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
               <h3 className="text-2xl font-bold text-hot-pink mb-3">
                 Check Your Email!
               </h3>
 
-              <p className="text-gray-300">
-                A confirmation link has been sent to:
+              <p className="mt-4 text-sm text-yellow-300 bg-yellow-500/10 border border-yellow-400/30 rounded-xl px-4 py-3">
+                ⚠️ Please verify your email before registering for any events.  
+                Registration will remain locked until verification is complete.
               </p>
 
               <p className="text-white font-semibold mt-2 mb-6">
