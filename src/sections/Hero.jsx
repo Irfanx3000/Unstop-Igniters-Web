@@ -5,10 +5,12 @@ import RegistrationModal from "../components/RegistrationModal";
 import logo from "../assets/background-logo.png";
 import { useEvents } from "../hooks/useEvents";
 
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
 const Hero = () => {
-  /* ================= HOOKS (ORDER SAFE) ================= */
-  const hookResult = useEvents("igniters");
-  const events = Array.isArray(hookResult?.events) ? hookResult.events : [];
+  const { events = [] } = useEvents("igniters");
 
   const [active, setActive] = useState(0);
   const [query, setQuery] = useState("");
@@ -17,121 +19,101 @@ const Hero = () => {
 
   /* ================= CAROUSEL ================= */
   useEffect(() => {
-    if (events.length === 0) return;
-
-    const interval = setInterval(() => {
-      setActive((prev) => (prev + 1) % events.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
+    if (!events.length) return;
+    const id = setInterval(
+      () => setActive((p) => (p + 1) % events.length),
+      5000
+    );
+    return () => clearInterval(id);
   }, [events]);
+
+  const current = events[active] || null;
+  const next = events[(active + 1) % events.length] || null;
 
   /* ================= SEARCH ================= */
   const suggestions = useMemo(() => {
     if (!query) return [];
     return events
       .filter((e) =>
-        e?.title?.toLowerCase().includes(query.toLowerCase())
+        e.title?.toLowerCase().includes(query.toLowerCase())
       )
       .slice(0, 5);
   }, [query, events]);
 
   /* ================= STATS ================= */
   const stats = useMemo(() => {
-    const total = events.length;
-    const activeCount = events.filter(
-      (e) => (e.registration_status || "active") === "active"
-    ).length;
-    const upcomingCount = events.filter(
-      (e) => e.registration_status === "upcoming"
-    ).length;
-
     return [
-      { value: total, label: "Total Events" },
-      { value: activeCount, label: "Active Registrations" },
-      { value: upcomingCount, label: "Upcoming Events" },
+      { label: "Total Events", value: events.length },
+      {
+        label: "Active Registrations",
+        value: events.filter(
+          (e) => (e.registration_status || "active") === "active"
+        ).length,
+      },
+      {
+        label: "Upcoming Events",
+        value: events.filter(
+          (e) => e.registration_status === "upcoming"
+        ).length,
+      },
     ];
   }, [events]);
-
-  const hasEvents = events.length > 0;
-  const safeIndex = hasEvents ? active % events.length : 0;
-  const current = hasEvents ? events[safeIndex] : null;
-  const next = hasEvents ? events[(safeIndex + 1) % events.length] : null;
 
   return (
     <section
       id="hero"
-<<<<<<< HEAD
-      className="
-        relative
-        pt-28 md:pt-24
-        min-h-screen
-        flex items-start md:items-center
-        overflow-hidden
-        bg-[#050505]
-        text-white
-      "
-=======
-      className="relative -mt-40 pt-10 pb-80 min-h-screen flex items-center overflow-hidden bg-[#050505] text-white"
->>>>>>> 238eeeda4e60fdf87d070eac894543dfe211fb96
+      className="relative -mt-24 pt-24 min-h-screen bg-[#050505] text-white overflow-hidden"
     >
-      {/* 🌌 BACKGROUND */}
+      {/* 🌌 Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 left-0 w-[650px] h-[600px] bg-pink-600/25 blur-[180px] rounded-full" />
-        <div className="absolute bottom-0 right-0 w-[700px] h-[650px] bg-orange-500/20 blur-[200px] rounded-full" />
+        <div className="absolute top-0 left-0 w-[650px] h-[600px] bg-pink-600/25 blur-[180px]" />
+        <div className="absolute bottom-0 right-0 w-[700px] h-[650px] bg-orange-500/20 blur-[200px]" />
       </div>
 
-      {/* WATERMARK */}
-      <div className="absolute inset-0 opacity-[0.05] flex items-center justify-center z-0">
-        <img src={logo} alt="logo" className="w-[600px] md:w-[800px]" />
+      {/* Watermark */}
+      <div className="absolute inset-0 opacity-[0.04] flex items-center justify-center">
+        <img src={logo} alt="logo" className="w-[900px]" />
       </div>
 
-      {/* LOADING */}
-      {!hasEvents && (
-        <div className="relative z-20 w-full text-center text-gray-400">
-          Loading events...
-        </div>
-      )}
+      <div className="relative z-20 container mx-auto px-6">
+        {/* ================= GRID ================= */}
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
 
-      {/* CONTENT */}
-      {hasEvents && (
-        <div className="container mx-auto px-4 md:px-6 relative z-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          
-          {/* LEFT */}
+          {/* ================= LEFT CONTENT ================= */}
           <div>
-            <div className="flex flex-wrap gap-3 mb-6">
-              <span className="px-4 py-1.5 rounded-full text-sm font-semibold bg-hot-pink/20 text-hot-pink border border-hot-pink/30">
+            <div className="flex gap-3 mb-6">
+              <span className="px-4 py-1.5 rounded-full text-sm bg-hot-pink/20 text-hot-pink">
                 🚀 Unstop Igniters
               </span>
-              <span className="px-4 py-1.5 rounded-full text-sm font-semibold bg-orange-500/20 text-orange-300 border border-orange-400/30">
+              <span className="px-4 py-1.5 rounded-full text-sm bg-orange-500/20 text-orange-300">
                 🔥 Trending
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight">
+            <h1 className="text-5xl md:text-6xl font-black leading-tight">
               Ignite <br />
               <span className="bg-gradient-to-r from-hot-pink to-orange-400 bg-clip-text text-transparent">
-                Your
+                Startup
               </span>{" "}
               Excellence
             </h1>
 
-            <p className="mt-6 text-base md:text-lg text-gray-300 max-w-xl">
+            <p className="mt-6 text-lg text-gray-300 max-w-xl">
               A premium student-driven ecosystem fostering innovation,
-              leadership, and culture through impactful events.
+              leadership, and startup culture through impactful events.
             </p>
 
-            {/* SEARCH */}
+            {/* Search */}
             <div className="relative mt-8 max-w-xl">
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search events..."
-                className="w-full px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-hot-pink"
+                className="w-full px-5 py-3 rounded-xl bg-white/10 border border-white/20 focus:ring-2 focus:ring-hot-pink"
               />
 
               {suggestions.length > 0 && (
-                <div className="absolute mt-2 w-full bg-black/90 border border-white/20 rounded-xl overflow-hidden z-30">
+                <div className="absolute mt-2 w-full bg-black/80 border border-white/20 rounded-xl overflow-hidden">
                   {suggestions.map((e) => (
                     <button
                       key={e.id}
@@ -148,50 +130,44 @@ const Hero = () => {
                 </div>
               )}
             </div>
+          </div>
+          {/* ================= RIGHT COLUMN ================= */}
+          <div className="flex flex-col gap-6">
 
-            {/* STATS */}
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-xl">
-              {stats.map((s) => (
-                <Stat key={s.label} value={s.value} label={s.label} />
-              ))}
+            {/* ----------- CAROUSEL ----------- */}
+            <div className="relative h-[460px]">
+              {next && (
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0.35, y: 30 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{ duration: 1 }}
+                  className="absolute inset-0 z-10"
+                >
+                  <GlassCard className="p-6 rounded-3xl bg-white/5">
+                    <HeroEventCard event={next} muted />
+                  </GlassCard>
+                </motion.div>
+              )}
+
+              {current && (
+                <motion.div className="absolute inset-0 z-20">
+                  <GlassCard
+                    onClick={() => {
+                      if ((current.registration_status || "active") === "active") {
+                        setSelectedEvent(current);
+                        setModalOpen(true);
+                      }
+                    }}
+                    className="p-6 rounded-3xl bg-white/10 cursor-pointer"
+                  >
+                    <HeroEventCard event={current} />
+                  </GlassCard>
+                </motion.div>
+              )}
             </div>
           </div>
-
-          {/* RIGHT */}
-          <div className="relative h-[360px] sm:h-[400px] lg:h-[460px] mt-10 lg:mt-0">
-            {next && (
-              <motion.div
-                key={next.id}
-                initial={{ scale: 0.92, opacity: 0.35, y: 40 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                transition={{ duration: 1 }}
-                className="absolute inset-0 z-10"
-              >
-                <GlassCard className="p-6 rounded-3xl bg-white/5">
-                  <HeroEventCard event={next} muted />
-                </GlassCard>
-              </motion.div>
-            )}
-
-            {current && (
-              <motion.div key={current.id} className="absolute inset-0 z-20">
-                <GlassCard
-                  onClick={() => {
-                    if ((current.registration_status || "active") === "active") {
-                      setSelectedEvent(current);
-                      setModalOpen(true);
-                    }
-                  }}
-                  className="p-6 rounded-3xl bg-white/10 cursor-pointer"
-                >
-                  <HeroEventCard event={current} />
-                </GlassCard>
-              </motion.div>
-            )}
-          </div>
         </div>
-      )}
-
+      </div>
       {/* MODAL */}
       {selectedEvent && (
         <RegistrationModal
@@ -207,12 +183,14 @@ const Hero = () => {
   );
 };
 
-/* ================= HELPERS ================= */
+/* =========================================================
+   HELPERS
+========================================================= */
 
 const Stat = ({ value, label }) => (
-  <div>
-    <h4 className="text-2xl font-bold">{value}</h4>
-    <p className="text-sm text-gray-400">{label}</p>
+  <div className="text-center">
+    <h4 className="text-3xl font-black">{value}</h4>
+    <p className="text-sm text-gray-400 mt-1">{label}</p>
   </div>
 );
 
@@ -220,22 +198,16 @@ const HeroEventCard = ({ event, muted }) => {
   const status = event.registration_status || "active";
 
   return (
-    <div className="group">
-<<<<<<< HEAD
-      <div className="relative h-44 sm:h-52 lg:h-60 overflow-hidden rounded-2xl">
-=======
-      <div className="relative h-full overflow-hidden rounded-2xl">
->>>>>>> 238eeeda4e60fdf87d070eac894543dfe211fb96
+    <div className={`group ${muted ? "opacity-70" : ""}`}>
+      <div className="relative h-60 overflow-hidden rounded-2xl">
         <img
           src={event.image_url}
           alt={event.title}
-          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${
-            muted ? "opacity-70" : ""
-          }`}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
       </div>
 
-      <div className={`mt-6 ${muted ? "opacity-70" : ""}`}>
+      <div className="mt-6">
         <div className="flex justify-between items-center">
           <h3 className="font-bold text-lg">{event.title}</h3>
           <span className="text-xs px-3 py-1 rounded-full bg-hot-pink/20 text-hot-pink">
