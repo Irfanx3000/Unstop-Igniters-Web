@@ -6,7 +6,7 @@ import logo from "../assets/background-logo.png";
 import { useEvents } from "../hooks/useEvents";
 
 /* =========================================================
-   HERO SECTION
+   HERO SECTION (RESPONSIVE FIXED)
 ========================================================= */
 
 const Hero = () => {
@@ -62,26 +62,33 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="relative -mt-24 pt-24 min-h-screen bg-[#050505] text-white overflow-hidden"
+      className="
+        relative bg-[#050505] text-white overflow-hidden
+        pt-28 md:pt-32 min-h-screen
+      "
     >
-      {/* 🌌 Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 left-0 w-[650px] h-[600px] bg-pink-600/25 blur-[180px]" />
-        <div className="absolute bottom-0 right-0 w-[700px] h-[650px] bg-orange-500/20 blur-[200px]" />
+      {/* 🌌 BACKGROUND */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-0 left-0 w-[450px] h-[450px] md:w-[650px] md:h-[600px] bg-pink-600/25 blur-[180px]" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] md:w-[700px] md:h-[650px] bg-orange-500/20 blur-[200px]" />
       </div>
 
-      {/* Watermark */}
-      <div className="absolute inset-0 opacity-[0.04] flex items-center justify-center">
-        <img src={logo} alt="logo" className="w-[900px]" />
+      {/* WATERMARK */}
+      <div className="absolute inset-0 opacity-[0.035] flex items-center justify-center -z-10">
+        <img
+          src={logo}
+          alt="logo"
+          className="w-[500px] md:w-[800px]"
+        />
       </div>
 
-      <div className="relative z-20 container mx-auto px-6">
+      <div className="container mx-auto px-5 sm:px-6 relative z-20">
         {/* ================= GRID ================= */}
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-start">
 
-          {/* ================= LEFT CONTENT ================= */}
-          <div>
-            <div className="flex gap-3 mb-6">
+          {/* ================= LEFT ================= */}
+          <div className="max-w-xl">
+            <div className="flex flex-wrap gap-3 mb-6">
               <span className="px-4 py-1.5 rounded-full text-sm bg-hot-pink/20 text-hot-pink">
                 🚀 Unstop Igniters
               </span>
@@ -90,7 +97,7 @@ const Hero = () => {
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-black leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight">
               Ignite <br />
               <span className="bg-gradient-to-r from-hot-pink to-orange-400 bg-clip-text text-transparent">
                 Startup
@@ -98,22 +105,26 @@ const Hero = () => {
               Excellence
             </h1>
 
-            <p className="mt-6 text-lg text-gray-300 max-w-xl">
+            <p className="mt-5 text-base sm:text-lg text-gray-300">
               A premium student-driven ecosystem fostering innovation,
               leadership, and startup culture through impactful events.
             </p>
 
-            {/* Search */}
-            <div className="relative mt-8 max-w-xl">
+            {/* SEARCH */}
+            <div className="relative mt-7">
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search events..."
-                className="w-full px-5 py-3 rounded-xl bg-white/10 border border-white/20 focus:ring-2 focus:ring-hot-pink"
+                className="
+                  w-full px-5 py-3 rounded-xl
+                  bg-white/10 border border-white/20
+                  focus:ring-2 focus:ring-hot-pink
+                "
               />
 
               {suggestions.length > 0 && (
-                <div className="absolute mt-2 w-full bg-black/80 border border-white/20 rounded-xl overflow-hidden">
+                <div className="absolute mt-2 w-full bg-black/90 border border-white/20 rounded-xl overflow-hidden z-30">
                   {suggestions.map((e) => (
                     <button
                       key={e.id}
@@ -131,11 +142,12 @@ const Hero = () => {
               )}
             </div>
           </div>
-          {/* ================= RIGHT COLUMN ================= */}
-          <div className="flex flex-col gap-6">
 
-            {/* ----------- CAROUSEL ----------- */}
-            <div className="relative h-[460px]">
+          {/* ================= RIGHT ================= */}
+          <div className="flex flex-col gap-8">
+
+            {/* -------- CAROUSEL -------- */}
+            <div className="relative h-[380px] sm:h-[420px] md:h-[460px]">
               {next && (
                 <motion.div
                   initial={{ scale: 0.95, opacity: 0.35, y: 30 }}
@@ -143,7 +155,7 @@ const Hero = () => {
                   transition={{ duration: 1 }}
                   className="absolute inset-0 z-10"
                 >
-                  <GlassCard className="p-6 rounded-3xl bg-white/5">
+                  <GlassCard className="p-5 sm:p-6 rounded-3xl bg-white/5">
                     <HeroEventCard event={next} muted />
                   </GlassCard>
                 </motion.div>
@@ -158,16 +170,24 @@ const Hero = () => {
                         setModalOpen(true);
                       }
                     }}
-                    className="p-6 rounded-3xl bg-white/10 cursor-pointer"
+                    className="p-5 sm:p-6 rounded-3xl bg-white/10 cursor-pointer"
                   >
                     <HeroEventCard event={current} />
                   </GlassCard>
                 </motion.div>
               )}
             </div>
+
+            {/* -------- STATS (UNDER CAROUSEL) -------- */}
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center">
+              {stats.map((s) => (
+                <Stat key={s.label} value={s.value} label={s.label} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
       {/* MODAL */}
       {selectedEvent && (
         <RegistrationModal
@@ -188,9 +208,9 @@ const Hero = () => {
 ========================================================= */
 
 const Stat = ({ value, label }) => (
-  <div className="text-center">
-    <h4 className="text-3xl font-black">{value}</h4>
-    <p className="text-sm text-gray-400 mt-1">{label}</p>
+  <div>
+    <h4 className="text-2xl sm:text-3xl font-black">{value}</h4>
+    <p className="text-xs sm:text-sm text-gray-400 mt-1">{label}</p>
   </div>
 );
 
@@ -199,7 +219,7 @@ const HeroEventCard = ({ event, muted }) => {
 
   return (
     <div className={`group ${muted ? "opacity-70" : ""}`}>
-      <div className="relative h-60 overflow-hidden rounded-2xl">
+      <div className="relative h-48 sm:h-56 overflow-hidden rounded-2xl">
         <img
           src={event.image_url}
           alt={event.title}
@@ -207,9 +227,9 @@ const HeroEventCard = ({ event, muted }) => {
         />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-5">
         <div className="flex justify-between items-center">
-          <h3 className="font-bold text-lg">{event.title}</h3>
+          <h3 className="font-bold text-base sm:text-lg">{event.title}</h3>
           <span className="text-xs px-3 py-1 rounded-full bg-hot-pink/20 text-hot-pink">
             {status.toUpperCase()}
           </span>
