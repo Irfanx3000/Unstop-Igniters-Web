@@ -61,6 +61,7 @@ const Hero = () => {
   return (
     <section
       id="hero"
+<<<<<<< HEAD
       className="
         relative
         pt-28 md:pt-24
@@ -70,6 +71,9 @@ const Hero = () => {
         bg-[#050505]
         text-white
       "
+=======
+      className="relative -mt-40 pt-10 pb-80 min-h-screen flex items-center overflow-hidden bg-[#050505] text-white"
+>>>>>>> 238eeeda4e60fdf87d070eac894543dfe211fb96
     >
       {/* 🌌 BACKGROUND */}
       <div className="absolute inset-0 z-0">
@@ -107,14 +111,14 @@ const Hero = () => {
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight">
               Ignite <br />
               <span className="bg-gradient-to-r from-hot-pink to-orange-400 bg-clip-text text-transparent">
-                Startup
+                Your
               </span>{" "}
               Excellence
             </h1>
 
             <p className="mt-6 text-base md:text-lg text-gray-300 max-w-xl">
               A premium student-driven ecosystem fostering innovation,
-              leadership, and startup culture through impactful events.
+              leadership, and culture through impactful events.
             </p>
 
             {/* SEARCH */}
@@ -217,7 +221,11 @@ const HeroEventCard = ({ event, muted }) => {
 
   return (
     <div className="group">
+<<<<<<< HEAD
       <div className="relative h-44 sm:h-52 lg:h-60 overflow-hidden rounded-2xl">
+=======
+      <div className="relative h-full overflow-hidden rounded-2xl">
+>>>>>>> 238eeeda4e60fdf87d070eac894543dfe211fb96
         <img
           src={event.image_url}
           alt={event.title}
