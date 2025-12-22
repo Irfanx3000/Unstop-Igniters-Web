@@ -2,99 +2,131 @@ import React, { useEffect, useRef, useState } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { supabase } from "../supabase/client";
 
+/* =========================================================
+   ATTENDANCE SCANNER (BACKWARD COMPATIBLE & SAFE)
+========================================================= */
+
 const AttendanceScanner = () => {
   const videoRef = useRef(null);
-  const codeReader = useRef(null);
+  const readerRef = useRef(null);
+  const scanningLock = useRef(false);
 
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState("");
   const [selectedDay, setSelectedDay] = useState(1);
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  /* 🔹 Fetch Igniters Events */
+  /* ================= FETCH EVENTS ================= */
   useEffect(() => {
     const fetchEvents = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("events")
         .select("id, title")
-        .eq("type", "igniters");
+        .eq("event_type", "igniters")
+        .order("event_date", { ascending: true });
 
-      setEvents(data || []);
+      if (!error) setEvents(data || []);
     };
 
     fetchEvents();
   }, []);
 
-  /* 🔹 Start QR Scanner */
+  /* ================= START SCANNER ================= */
   useEffect(() => {
-    if (!videoRef.current) return;
+    if (!videoRef.current || !selectedEvent) return;
 
-    codeReader.current = new BrowserMultiFormatReader();
+    readerRef.current = new BrowserMultiFormatReader();
 
-    codeReader.current.decodeFromVideoDevice(
+    readerRef.current.decodeFromVideoDevice(
       null,
       videoRef.current,
-      async (result, error) => {
-        if (result) {
+      async (result, err) => {
+        if (result && !scanningLock.current) {
+          scanningLock.current = true;
           await handleScan(result.getText());
+          setTimeout(() => (scanningLock.current = false), 2000);
         }
       }
     );
 
     return () => {
-      codeReader.current?.reset();
+      readerRef.current?.reset();
     };
   }, [selectedEvent, selectedDay]);
 
-  /* 🔹 Handle QR Scan */
-  const handleScan = async (text) => {
+  /* ================= HANDLE QR ================= */
+  const handleScan = async (qrText) => {
     try {
-      const parsed = JSON.parse(text);
-      const registrationId = parsed.registration_id;
+      setLoading(true);
+      setStatus("");
 
-      if (!registrationId || !selectedEvent) return;
+      const parsed = JSON.parse(qrText);
+      let registrationId = null;
 
-      // 🔒 Prevent duplicate for same day
+      /* 🔁 OLD QR SUPPORT */
+      if (parsed.registration_id) {
+        const { data } = await supabase
+          .from("igniters_registrations")
+          .select("id")
+          .eq("registration_id", parsed.registration_id)
+          .single();
+
+        registrationId = data?.id;
+      }
+
+      /* 🔁 NEW QR SUPPORT */
+      if (parsed.id) {
+        registrationId = parsed.id;
+      }
+
+      if (!registrationId) {
+        setStatus("❌ Invalid QR Code");
+        return;
+      }
+
+      /* 🔒 PREVENT DUPLICATE */
       const { data: existing } = await supabase
         .from("event_attendance")
         .select("id")
         .eq("registration_id", registrationId)
+        .eq("event_id", selectedEvent)
         .eq("day", selectedDay)
         .maybeSingle();
 
       if (existing) {
-        setStatus("⚠ Already marked for this day");
+        setStatus("⚠ Attendance already marked");
         return;
       }
 
-      // ✅ Insert attendance
-      const { error } = await supabase.from("event_attendance").insert([
-        {
-          registration_id: registrationId,
-          event_id: selectedEvent,
-          day: selectedDay,
-          status: true,
-        },
-      ]);
+      /* ✅ INSERT ATTENDANCE */
+      const { error } = await supabase.from("event_attendance").insert({
+        registration_id: registrationId,
+        event_id: selectedEvent,
+        day: selectedDay,
+        status: true,
+      });
 
       if (error) throw error;
 
       setStatus("✅ Attendance marked successfully");
     } catch (err) {
       console.error(err);
-      setStatus("❌ Invalid QR code");
+      setStatus("❌ QR Scan Failed");
+    } finally {
+      setLoading(false);
     }
   };
 
+  /* ================= UI ================= */
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-8">
+    <div className="min-h-screen bg-[#050505] text-white p-6">
       <h1 className="text-3xl font-black text-hot-pink mb-6">
         Attendance Scanner
       </h1>
 
       {/* CONTROLS */}
       <div className="flex flex-wrap gap-4 mb-6">
-        {/* Event Selector */}
         <select
           value={selectedEvent}
           onChange={(e) => setSelectedEvent(e.target.value)}
@@ -108,7 +140,6 @@ const AttendanceScanner = () => {
           ))}
         </select>
 
-        {/* Day Selector */}
         <select
           value={selectedDay}
           onChange={(e) => setSelectedDay(Number(e.target.value))}
@@ -121,17 +152,33 @@ const AttendanceScanner = () => {
       </div>
 
       {/* CAMERA */}
-      <div className="max-w-md rounded-2xl overflow-hidden border border-white/20">
-        <video ref={videoRef} className="w-full h-auto" />
-      </div>
+      {selectedEvent && (
+        <div className="max-w-md rounded-2xl overflow-hidden border border-white/20">
+          <video ref={videoRef} className="w-full h-auto" />
+        </div>
+      )}
 
       {/* STATUS */}
       {status && (
-        <div className="mt-4 text-lg font-semibold">{status}</div>
+        <div
+          className={`mt-4 text-lg font-semibold ${
+            status.includes("✅")
+              ? "text-green-400"
+              : status.includes("⚠")
+              ? "text-yellow-400"
+              : "text-red-400"
+          }`}
+        >
+          {status}
+        </div>
+      )}
+
+      {loading && (
+        <p className="mt-3 text-sm text-gray-400">Processing scan...</p>
       )}
 
       <p className="mt-6 text-gray-400 text-sm">
-        📸 Keep QR inside camera frame. Attendance is auto-marked.
+        📸 Keep QR inside the frame. Scan is automatic.
       </p>
     </div>
   );

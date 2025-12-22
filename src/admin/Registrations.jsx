@@ -5,7 +5,7 @@ import { saveAs } from "file-saver";
 import QRScanner from "../components/QRScanner";
 
 /* =========================================================
-   REGISTRATIONS ADMIN SCREEN
+   REGISTRATIONS ADMIN SCREEN (UI IMPROVED)
 ========================================================= */
 
 const Registrations = () => {
@@ -24,13 +24,13 @@ const Registrations = () => {
   }, []);
 
   const fetchEvents = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("events")
       .select("id, title")
       .eq("event_type", "igniters")
       .order("event_date", { ascending: true });
 
-    if (!error && data?.length) {
+    if (data?.length) {
       setEvents(data);
       setSelectedEvent(data[0].id);
     }
@@ -66,22 +66,27 @@ const Registrations = () => {
     setLoading(false);
   };
 
-  /* ================= MANUAL ATTENDANCE ================= */
+  /* ================= MANUAL TOGGLE ================= */
   const toggleAttendance = async (registrationId, day) => {
-    const current = attendance?.[registrationId]?.[day] || false;
+    const current = attendance?.[registrationId]?.[day];
 
-    await supabase.from("event_attendance").upsert({
-      registration_id: registrationId,
-      event_id: selectedEvent,
-      day,
-      status: !current,
-      marked_at: new Date(),
-    });
+    await supabase
+      .from("event_attendance")
+      .upsert(
+        {
+          registration_id: registrationId,
+          event_id: selectedEvent,
+          day,
+          status: !current,
+          scanned_at: new Date().toISOString(),
+        },
+        { onConflict: "registration_id,event_id,day" }
+      );
 
     fetchRegistrations();
   };
 
-  /* ================= QR SCAN HANDLER ================= */
+  /* ================= QR SCAN ================= */
   const handleQRScan = async (decodedText) => {
     try {
       const { registration_id, event_id } = JSON.parse(decodedText);
@@ -91,15 +96,20 @@ const Registrations = () => {
         return;
       }
 
-      await supabase.from("event_attendance").upsert({
-        registration_id,
-        event_id,
-        day: scanDay,
-        status: true,
-        marked_at: new Date(),
-      });
+      await supabase
+        .from("event_attendance")
+        .upsert(
+          {
+            registration_id,
+            event_id,
+            day: scanDay,
+            status: true,
+            scanned_at: new Date().toISOString(),
+          },
+          { onConflict: "registration_id,event_id,day" }
+        );
 
-      setScanSuccess("Attendance marked successfully");
+      setScanSuccess("✅ Attendance marked successfully");
       setScannerOpen(false);
       fetchRegistrations();
 
@@ -109,16 +119,16 @@ const Registrations = () => {
     }
   };
 
-  /* ================= EXPORT TO EXCEL ================= */
+  /* ================= EXPORT ================= */
   const exportToExcel = () => {
     const rows = registrations.map((r) => ({
       Name: r.name,
       Email: r.email,
       Course: r.course,
       Year: r.year,
-      Day1: attendance?.[r.id]?.[1] ? "Present" : "Absent",
-      Day2: attendance?.[r.id]?.[2] ? "Present" : "Absent",
-      Day3: attendance?.[r.id]?.[3] ? "Present" : "Absent",
+      Day1: attendance?.[r.registration_id]?.[1] ? "Present" : "Absent",
+      Day2: attendance?.[r.registration_id]?.[2] ? "Present" : "Absent",
+      Day3: attendance?.[r.registration_id]?.[3] ? "Present" : "Absent",
     }));
 
     const ws = XLSX.utils.json_to_sheet(rows);
@@ -131,10 +141,10 @@ const Registrations = () => {
 
   /* ================= UI ================= */
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* HEADER */}
       <div className="flex flex-wrap justify-between items-center gap-4">
-        <h2 className="text-3xl md:text-4xl font-black text-hot-pink">
+        <h2 className="text-4xl font-black text-hot-pink">
           Event Registrations
         </h2>
 
@@ -145,34 +155,46 @@ const Registrations = () => {
 
           <button
             onClick={() => setScannerOpen(true)}
-            className="bg-white/10 px-4 py-2 rounded-xl"
+            className="border border-white/30 px-4 py-2 rounded-xl hover:bg-white/10"
           >
             Open QR Scanner
           </button>
         </div>
       </div>
 
-      {/* EVENT SELECT */}
-      <select
-        value={selectedEvent}
-        onChange={(e) => setSelectedEvent(e.target.value)}
-        className="bg-white/10 p-3 rounded-xl border border-white/20 w-full md:w-1/3"
-      >
-        {events.map((e) => (
-          <option key={e.id} value={e.id}>
-            {e.title}
-          </option>
-        ))}
-      </select>
+      {/* CONTROLS */}
+      <div className="flex flex-wrap gap-4">
+        <select
+          value={selectedEvent}
+          onChange={(e) => setSelectedEvent(e.target.value)}
+          className="bg-white/10 p-3 rounded-xl border border-white/20"
+        >
+          {events.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.title}
+            </option>
+          ))}
+        </select>
 
-      {/* SUCCESS POPUP */}
+        <select
+          value={scanDay}
+          onChange={(e) => setScanDay(Number(e.target.value))}
+          className="bg-white/10 p-3 rounded-xl border border-white/20"
+        >
+          <option value={1}>Day 1</option>
+          <option value={2}>Day 2</option>
+          <option value={3}>Day 3</option>
+        </select>
+      </div>
+
+      {/* SUCCESS */}
       {scanSuccess && (
         <div className="bg-green-500/20 text-green-300 p-3 rounded-xl">
           {scanSuccess}
         </div>
       )}
 
-      {/* QR SCANNER */}
+      {/* QR */}
       {scannerOpen && (
         <QRScanner
           onScan={handleQRScan}
@@ -187,32 +209,55 @@ const Registrations = () => {
         ) : registrations.length === 0 ? (
           <p className="text-gray-400">No registrations found.</p>
         ) : (
-          <table className="w-full text-left min-w-[700px]">
+          <table className="w-full min-w-[900px] border-separate border-spacing-y-2">
             <thead>
-              <tr className="border-b border-white/10">
+              <tr className="text-gray-300">
                 <th>Name</th>
                 <th>Email</th>
                 <th>Course</th>
                 <th>Year</th>
                 {[1, 2, 3].map((d) => (
-                  <th key={d}>Day {d}</th>
+                  <th key={d} className="text-center">
+                    Day {d}
+                  </th>
                 ))}
               </tr>
             </thead>
+
             <tbody>
               {registrations.map((r) => (
-                <tr key={r.id} className="border-b border-white/5">
+                <tr
+                  key={r.id}
+                  className="bg-white/5 hover:bg-white/10 transition rounded-xl"
+                >
                   <td>{r.name}</td>
                   <td>{r.email}</td>
                   <td>{r.course}</td>
                   <td>{r.year}</td>
+
                   {[1, 2, 3].map((d) => (
-                    <td key={d}>
-                      <input
-                        type="checkbox"
-                        checked={attendance?.[r.id]?.[d] || false}
-                        onChange={() => toggleAttendance(r.id, d)}
-                      />
+                    <td key={d} className="text-center">
+                      <button
+                        onClick={() =>
+                          toggleAttendance(r.registration_id, d)
+                        }
+                        className={`
+                          w-9 h-9 rounded-full font-bold transition
+                          ${
+                            attendance?.[r.registration_id]?.[d] === true
+                              ? "bg-green-500 text-black"
+                              : attendance?.[r.registration_id]?.[d] === false
+                              ? "bg-red-500 text-white"
+                              : "bg-gray-700 text-gray-300"
+                          }
+                        `}
+                      >
+                        {attendance?.[r.registration_id]?.[d] === true
+                          ? "✓"
+                          : attendance?.[r.registration_id]?.[d] === false
+                          ? "✕"
+                          : "–"}
+                      </button>
                     </td>
                   ))}
                 </tr>

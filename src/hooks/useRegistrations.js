@@ -12,10 +12,7 @@ export const useRegistrations = () => {
 
       const { data, error } = await supabase
         .from("igniters_registrations")
-        .select(`
-          *,
-          events ( title )
-        `)
+        .select("*") // ✅ remove relation for realtime safety
         .order("registered_at", { ascending: false });
 
       if (error) throw error;
@@ -32,7 +29,7 @@ export const useRegistrations = () => {
     fetchRegistrations();
 
     const channel = supabase
-      .channel("registrations-realtime")
+      .channel("registrations-admin") // ✅ stable unique name
       .on(
         "postgres_changes",
         {
@@ -41,15 +38,10 @@ export const useRegistrations = () => {
           table: "igniters_registrations",
         },
         () => {
-          // 🔥 SAFEST: refetch instead of partial mutation
-          fetchRegistrations();
+          fetchRegistrations(); // safest approach
         }
       )
-      .subscribe((status) => {
-        if (status === "SUBSCRIBED") {
-          console.log("Realtime registrations subscribed");
-        }
-      });
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
@@ -62,9 +54,6 @@ export const useRegistrations = () => {
       .from("igniters_registrations")
       .insert([registration])
       .select();
-
-    // ❌ DO NOT set state here
-    // realtime listener will trigger fetchRegistrations
 
     return { data, error };
   };
