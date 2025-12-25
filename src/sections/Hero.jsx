@@ -4,7 +4,7 @@ import GlassCard from "../components/GlassCard";
 import RegistrationModal from "../components/RegistrationModal";
 import logo from "../assets/background-logo.png";
 import { useEvents } from "../hooks/useEvents";
-import Snowfall from "snowfall";
+
 const Hero = () => {
   const { events = [] } = useEvents("igniters");
 
@@ -37,7 +37,6 @@ const Hero = () => {
   }, [query, events]);
 
   return (
-    <Snowfall>
     <section
       id="hero"
       className="relative -mt-24 pt-24 min-h-screen bg-[#050505] text-white overflow-hidden"
@@ -160,7 +159,6 @@ const Hero = () => {
         />
       )}
     </section>
-    </Snowfall>
   );
 };
 
