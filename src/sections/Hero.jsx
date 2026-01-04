@@ -282,7 +282,7 @@ const Hero = () => {
           "
         >
           {/* LEFT: TEXT */}
-          <div className="max-w-xl">
+          <div className="max-w-xl -mt-10 lg:-mt-20">
             <div className="flex flex-wrap gap-3 mb-6">
               <span className="px-4 py-1.5 rounded-full text-sm bg-hot-pink/20 text-hot-pink">
                 🚀 Unstop Igniters
@@ -306,7 +306,7 @@ const Hero = () => {
             </p>
 
             {/* SEARCH */}
-            <div className="relative mt-6">
+            <div className="relative mt-6 pb-20">
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -335,7 +335,7 @@ const Hero = () => {
           </div>
 
           {/* RIGHT: CAROUSEL (LOCKED) */}
-          <div className="relative w-full max-w-[520px] ml-auto">
+          <div className="relative w-full max-w-[520px] ml-auto -mt-20 lg:-mt-19">
             {next && (
               <motion.div
                 initial={{ scale: 0.96, opacity: 0.35, y: 20 }}
